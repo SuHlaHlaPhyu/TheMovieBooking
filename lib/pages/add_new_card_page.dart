@@ -6,8 +6,6 @@ import 'package:movie_booking/resources/color.dart';
 import 'package:movie_booking/resources/string.dart';
 import 'package:movie_booking/widgets/app_text_button.dart';
 
-import 'payment_info_page.dart';
-
 class AddNewCardPage extends StatefulWidget {
   const AddNewCardPage({Key? key}) : super(key: key);
 
@@ -120,8 +118,6 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
                         cardType)
                     .then((value) {
                   Navigator.pop(context);
-                  //_navigateToAddPaymentPage(context);
-                  // Navigator.pop(context);
                 });
               });
             }
@@ -135,15 +131,6 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
   }
 }
 
-// void _navigateToAddPaymentPage(BuildContext context) {
-//   Navigator.push(
-//     context,
-//     MaterialPageRoute(
-//       builder: (context) => PaymentInfoPage(),
-//     ),
-//   );
-// }
-
 class InputTextFormView extends StatelessWidget {
   final TextEditingController _textController;
   final FocusNode _textFocus;
@@ -151,7 +138,6 @@ class InputTextFormView extends StatelessWidget {
   final String _labelText;
   final String _errorText;
   final bool obsureText;
-  // ignore: prefer_const_constructors_in_immutables, use_key_in_widget_constructors
   InputTextFormView(
     this._textController,
     this._textFocus,

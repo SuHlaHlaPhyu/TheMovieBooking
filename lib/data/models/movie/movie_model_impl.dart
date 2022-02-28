@@ -20,32 +20,7 @@ class MovieModelImpl extends MovieModel {
   MovieDao movieDao = MovieDao();
   ActorDao actorDao = ActorDao();
 
-  // from network
-  // @override
-  // Future<List<MovieVO>> getComingSoonMovies(int page) {
-  //   return _dataAgent.getComingSoonMovies(page).then((movies) async {
-  //     List<MovieVO> comingSoonMovies = movies!.map((movie) {
-  //       movie.isNowPlaying = false;
-  //       movie.isComingSoon = true;
-  //       return movie;
-  //     }).toList();
-  //     movieDao.saveAllMovies(comingSoonMovies);
-  //     return Future.value(movies);
-  //   });
-  // }
-  // @override
-  // Future<List<MovieVO>> getNowPlayingMovies(int page) {
-  //   return _dataAgent.getNowPlayingMovies(page).then((movies) async {
-  //     List<MovieVO> nowPlayingMovies = movies!.map((movie) {
-  //       movie.isNowPlaying = true;
-  //       movie.isComingSoon = false;
-  //       return movie;
-  //     }).toList();
-  //     movieDao.saveAllMovies(nowPlayingMovies);
-  //     return Future.value(movies);
-  //   });
-  // }
-
+  /// from network
   @override
   Future<List<List<ActorVO>?>> getCreditByMovie(int movieId) {
     return _dataAgent.getCreditByMovie(movieId).then((value) {
@@ -64,21 +39,6 @@ class MovieModelImpl extends MovieModel {
   }
 
   /// from database
-  // @override
-  // Future<List<MovieVO>?> getComingSoonMoviesFromDatabase(int page) {
-  //   return Future.value(movieDao
-  //       .getAllMovies()
-  //       .where((movie) => movie.isComingSoon ?? true)
-  //       .toList());
-  // }
-  // @override
-  // Future<List<MovieVO>?> getNowPlayingMoviesFromDatabase(int page) {
-  //   return Future.value(movieDao
-  //       .getAllMovies()
-  //       .where((movie) => movie.isNowPlaying ?? true)
-  //       .toList());
-  // }
-
   @override
   Future<List<ActorVO>?> getCreditByMovieFromDatabase(int movieId) {
     return Future.value(actorDao.getAllActors().toList());

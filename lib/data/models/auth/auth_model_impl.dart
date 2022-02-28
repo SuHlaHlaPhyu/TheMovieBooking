@@ -59,31 +59,6 @@ class AuthModelImpl extends AuthModel {
     });
   }
 
-  // @override
-  // Future<List<CinemaVO>?> getCinemaDayTimeSlot(String token, String date) {
-  //   return _dataAgent.getCinemaDayTimeSlot(token, date).then((value) {
-  //     List<CinemaVO> timeSlotList = value!.map((timeSlot) {
-  //       timeSlot.isSelected = true;
-  //       return timeSlot;
-  //     }).toList();
-  //     timeSlotDao.saveAllCinemaDayTimeslot(timeSlotList);
-  //     return Future.value(value);
-  //   });
-  // }
-  // @override
-  // Future<List<CinemaVO>?> getCinemaDayTimeSlot(String token, String date) {
-  //   return _dataAgent.getCinemaDayTimeSlot(token, date).then((value) {
-  //     List<CinemaVO> timeSlotList = value!.map((timeSlot) {
-  //       timeSlot.timeslots?.map((time) {
-  //         time.isSelected = false;
-  //         return time;
-  //       }).toList();
-  //       return timeSlot;
-  //     }).toList();
-  //     timeSlotDao.saveAllCinemaDayTimeslot(timeSlotList);
-  //     return Future.value(value);
-  //   });
-  // }
   @override
   Future<List<CinemaVO>?> getCinemaDayTimeSlot(String token, String date) {
     return _dataAgent.getCinemaDayTimeSlot(token, date).then((value) {
@@ -124,13 +99,6 @@ class AuthModelImpl extends AuthModel {
     });
   }
 
-  // @override
-  // Future<List<SnackVO>?> getSnackList(String token) {
-  //   return _dataAgent.getSnackList(token).then((value) {
-  // snackDao.saveAllSnackInfo(value!);
-  // return Future.value(value);
-  //   });
-  // }
   @override
   Future<List<SnackVO>?> getSnackList(String token) {
     return _dataAgent.getSnackList(token).then((value) {
@@ -157,14 +125,6 @@ class AuthModelImpl extends AuthModel {
       return Future.value(value);
     });
   }
-
-  // @override
-  // Future<UserDataVO?> getProfile(String token) {
-  //   return _dataAgent.getProfile(token).then((value) {
-  //     userDataDao.saveUserData(value!);
-  //     return Future.value(value);
-  //   });
-  // }
 
   @override
   Future<UserDataVO?> getProfile(String token) {

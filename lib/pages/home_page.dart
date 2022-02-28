@@ -64,13 +64,6 @@ class _HomePageState extends State<HomePage> {
         debugPrint(error.toString());
       });
     });
-    // movieModel.getNowPlayingMovies(1).then((movieList) {
-    //   setState(() {
-    //     nowShowingMovies = movieList;
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
 
     /// get now playing movie from db
     movieModel.getNowPlayingMoviesFromDatabase(1).listen((movieList) {
@@ -80,15 +73,6 @@ class _HomePageState extends State<HomePage> {
     }).onError((error) {
       debugPrint(error.toString());
     });
-
-    /// get coming soon movie
-    // movieModel.getComingSoonMovies(1).then((movieList) {
-    //   setState(() {
-    //     comingSoonMovies = movieList;
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
 
     /// get coming soon movie from db
     movieModel.getComingSoonMoviesFromDatabase(1).listen((movieList) {
