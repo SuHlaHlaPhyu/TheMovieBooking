@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="app_name">TheMovieBooking</string>
+<string name="facebook_app_id">2037032139798608</string>
+<string name="fb_login_protocol_scheme">fb2037032139798608</string>
+<string name="facebook_client_token">881e87096bacae09e58480c4a02a8112</string>
+</resources>
