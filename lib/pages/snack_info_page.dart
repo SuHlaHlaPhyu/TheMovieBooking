@@ -46,43 +46,27 @@ class _SnackInfoPageState extends State<SnackInfoPage> {
   List<SnackRequest>? snackRequest;
   @override
   void initState() {
-    // // snack list
+    // snack list
     grandTotal += widget.totalCost;
-    authModel.getUserTokenfromDatabase().then((value) {
-      // authModel.getSnackList("Bearer " + value).then((snack) {
-      //   setState(() {
-      //     snackList = snack!;
-      //   });
-      // }).catchError((error) {
-      //   debugPrint(error.toString());
-      // });
 
-      // snack list from db
-      authModel.getSnackListFromDatabase().then((snack) {
-        setState(() {
-          snackList = snack!;
-          print("snack list from db $snackList");
-        });
-      }).catchError((error) {
-        debugPrint(error.toString());
+    // snack list from db
+    authModel.getSnackListFromDatabase().listen((snack) {
+      setState(() {
+        snackList = snack!;
       });
-
-      /// payment methods
-      authModel.getPaymentMethodList("Bearer " + value).then((payment) {
-        setState(() {
-          paymentList = payment;
-        });
-      }).catchError((error) {
-        debugPrint(error.toString());
-      });
+    }).onError((error) {
+      debugPrint(error.toString());
     });
 
     /// payment methods
-    authModel.getPaymentMethodListFromDatabase().then((payment) {
+    authModel.getPaymentMethodList();
+
+    /// payment methods
+    authModel.getPaymentMethodListFromDatabase().listen((payment) {
       setState(() {
         paymentList = payment;
       });
-    }).catchError((error) {
+    }).onError((error) {
       debugPrint(error.toString());
     });
 

@@ -14,6 +14,7 @@ import 'package:movie_booking/persistance/daos/payment_method_dao.dart';
 import 'package:movie_booking/persistance/daos/seat_plan_dao.dart';
 import 'package:movie_booking/persistance/daos/snack_dao.dart';
 import 'package:movie_booking/persistance/daos/user_data_dao.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 import '../../vos/cinema_list_for_hive_vo.dart';
 import 'auth_model.dart';
@@ -36,32 +37,10 @@ class AuthModelImpl extends AuthModel {
   UserCardDao userCardDao = UserCardDao();
 
   /// from network
-  // @override
-  // Future<List> loginWithEmail(String email, String password) {
-  //   return _dataAgent.loginWithEmail(email, password).then((value) async {
-  //     UserDataVO user = value[2];
-  //     user.userToken = value[3];
-  //     userDataDao.saveUserData(user);
-  //     return Future.value(value);
-  //   });
-  // }
-
-  // @override
-  // Future<List> registerWithEmail(String name, String email, String phone,
-  //     String password, String googleToken, String facebookToken) {
-  //   return _dataAgent
-  //       .registerWithEmail(
-  //           name, email, phone, password, googleToken, facebookToken)
-  //       .then((value) async {
-  //     UserDataVO user = value[2];
-  //     user.userToken = value[3];
-  //     userDataDao.saveUserData(user);
-  //     return Future.value(value);
-  //   });
-  // }
 
   @override
-  Future<List<CinemaVO>?> getCinemaDayTimeSlot(String token, String date) {
+  Future<List<CinemaVO>?> getCinemaDayTimeSlot(String date) {
+    String token = "Bearer " + userDataDao.getUserToken().toString();
     return _dataAgent.getCinemaDayTimeSlot(token, date).then((value) {
       List<CinemaVO> timeSlotList = value!.map((timeSlot) {
         timeSlot.timeslots?.map((time) {
@@ -77,7 +56,8 @@ class AuthModelImpl extends AuthModel {
   }
 
   @override
-  Future<List> logout(String token) {
+  Future<List> logout() {
+    String token = "Bearer " + userDataDao.getUserToken().toString();
     return _dataAgent.logout(token).then((value) {
       userDataDao.clearUserData();
       return Future.value(value);
@@ -86,7 +66,8 @@ class AuthModelImpl extends AuthModel {
 
   @override
   Future<List<List<SeatingPlanVO>>?> getCinemaSeatingPlan(
-      String token, int cinemaDaytimeslotId, String bookingDate) {
+      int cinemaDaytimeslotId, String bookingDate) {
+    String token = "Bearer " + userDataDao.getUserToken().toString();
     return _dataAgent
         .getCinemaSeatingPlan(token, cinemaDaytimeslotId, bookingDate)
         .then((value) {
@@ -101,34 +82,16 @@ class AuthModelImpl extends AuthModel {
   }
 
   @override
-  Future<List<SnackVO>?> getSnackList(String token) {
-    return _dataAgent.getSnackList(token).then((value) {
-      List<SnackVO> snackList = value!.map((snack) {
-        snack.quantity = 0;
-        return snack;
-      }).toList();
-      snackDao.saveAllSnackInfo(snackList);
-      return Future.value(value);
-    });
-  }
-
-  @override
-  Future<List<UserCardVO>?> createCard(String token, int cardNumber,
-      String cardHolder, String expirationDate, int cvc) {
+  Future<List<UserCardVO>?> createCard(
+      int cardNumber, String cardHolder, String expirationDate, int cvc) {
+    String token = "Bearer " + userDataDao.getUserToken().toString();
     return _dataAgent.createCard(
         token, cardNumber, cardHolder, expirationDate, cvc);
   }
 
   @override
-  Future<List<PaymentVO>?> getPaymentMethodList(String token) {
-    return _dataAgent.getPaymentMethodList(token).then((value) {
-      paymentMethodDao.saveAllPaymentMethod(value!);
-      return Future.value(value);
-    });
-  }
-
-  @override
-  Future<UserDataVO?> getProfile(String token) {
+  Future<UserDataVO?> getProfile() {
+    String token = "Bearer " + userDataDao.getUserToken().toString();
     return _dataAgent.getProfile(token).then((value) {
       userCardDao.saveAllUserCards(value!.cards!);
       return Future.value(value);
@@ -136,9 +99,19 @@ class AuthModelImpl extends AuthModel {
   }
 
   @override
-  Future<CheckoutVO?> checkout(String token, CheckOutRequest request) {
+  Future<CheckoutVO?> checkout(CheckOutRequest request) {
+    String token = "Bearer " + userDataDao.getUserToken().toString();
     return _dataAgent.checkOut(token, request);
   }
+
+  // @override
+  // Future<List<PaymentVO>?> getPaymentMethodList() {
+  //   String token = "Bearer " + userDataDao.getUserToken().toString();
+  //   return _dataAgent.getPaymentMethodList(token).then((value) {
+  //     paymentMethodDao.saveAllPaymentMethod(value!);
+  //     return Future.value(value);
+  //   });
+  // }
 
   // @override
   // Future<List> loginWithFacebook(String accessToken) {
@@ -149,7 +122,6 @@ class AuthModelImpl extends AuthModel {
   //     return Future.value(value);
   //   });
   // }
-
   // @override
   // Future<List> loginWithGoogle(String accessToken) {
   //   return _dataAgent.loginWithGoogle(accessToken).then((value) async {
@@ -161,10 +133,6 @@ class AuthModelImpl extends AuthModel {
   // }
 
   /// from database
-  // @override
-  // Future<UserDataVO> getUserDatafromDatabase() {
-  //   return Future.value(userDataDao.getUserData());
-  // }
 
   @override
   Future<String> getUserTokenfromDatabase() {
@@ -179,16 +147,6 @@ class AuthModelImpl extends AuthModel {
   @override
   Future<List<SeatingPlanVO>?> getCinemaSeatingPlanFromDatabase() {
     return Future.value(seatPlanDao.getAllSeatPlan());
-  }
-
-  @override
-  Future<List<PaymentVO>?> getPaymentMethodListFromDatabase() {
-    return Future.value(paymentMethodDao.getAllPaymentMethod());
-  }
-
-  @override
-  Future<List<SnackVO>?> getSnackListFromDatabase() {
-    return Future.value(snackDao.getAllSnackInfo());
   }
 
   @override
@@ -237,18 +195,51 @@ class AuthModelImpl extends AuthModel {
     });
   }
 
+  @override
+  void getSnackList() {
+    String token = "Bearer " + userDataDao.getUserToken().toString();
+    _dataAgent.getSnackList(token).then((value) {
+      List<SnackVO> snackList = value!.map((snack) {
+        snack.quantity = 0;
+        return snack;
+      }).toList();
+      snackDao.saveAllSnackInfo(snackList);
+    });
+  }
+
+  @override
+  void getPaymentMethodList() {
+    String token = "Bearer " + userDataDao.getUserToken().toString();
+    _dataAgent.getPaymentMethodList(token).then((value) {
+      paymentMethodDao.saveAllPaymentMethod(value!);
+    });
+  }
+
   /// from database
   @override
   Stream<UserDataVO?> getUserDatafromDatabase() {
     return userDataDao
         .getUserDataEventStream()
+        // ignore: void_checks
+        .startWith(userDataDao.getUserDataStream())
         .map((event) => userDataDao.getUserData());
   }
 
-  // @override
-  // Stream<String?> getUserTokenfromDatabase() {
-  //   return userDataDao
-  //       .getUserDataEventStream()
-  //       .map((event) => userDataDao.getUserToken());
-  // }
+  @override
+  Stream<List<SnackVO>?> getSnackListFromDatabase() {
+    getSnackList();
+    return snackDao
+        .getSnackListEventStream()
+        // ignore: void_checks
+        .startWith(snackDao.getAllSnackInfoStream())
+        .map((event) => snackDao.getAllSnackInfo());
+  }
+
+  @override
+  Stream<List<PaymentVO>?> getPaymentMethodListFromDatabase() {
+    return paymentMethodDao
+        .getPaymentMethodEventStream()
+        .startWith(paymentMethodDao.getAllPaymentMethodStream())
+        .map((event) => paymentMethodDao.getAllPaymentMethod());
+  }
 }

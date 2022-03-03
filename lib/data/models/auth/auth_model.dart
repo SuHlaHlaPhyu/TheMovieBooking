@@ -23,50 +23,41 @@ abstract class AuthModel {
   //   String googleToken,
   //   String facebookToken,
   // );
-  Future<List> logout(
-    String token,
-  );
   // Future<List> loginWithGoogle(
   //   String accessToken,
   // );
   // Future<List> loginWithFacebook(
   //   String accessToken,
   // );
+  Future<List> logout();
   Future<List<CinemaVO>?> getCinemaDayTimeSlot(
-    String token,
     String date,
   );
   Future<List<List<SeatingPlanVO>>?> getCinemaSeatingPlan(
-    String token,
     int cinemaDaytimeslotId,
     String bookingDate,
   );
-  Future<List<SnackVO>?> getSnackList(
-    String token,
-  );
+  // Future<List<SnackVO>?> getSnackList(
+  //   String token,
+  // );
   Future<List<UserCardVO>?> createCard(
-    String token,
     int cardNumber,
     String cardHolder,
     String expirationDate,
     int cvc,
   );
-  Future<UserDataVO?> getProfile(
-    String token,
-  );
-  Future<List<PaymentVO>?> getPaymentMethodList(
-    String token,
-  );
+  Future<UserDataVO?> getProfile();
+  // Future<List<PaymentVO>?> getPaymentMethodList();
 
-  Future<CheckoutVO?> checkout(String token, CheckOutRequest request);
+  Future<CheckoutVO?> checkout(CheckOutRequest request);
 
   /// from database
   Stream<UserDataVO?> getUserDatafromDatabase();
   Future<String> getUserTokenfromDatabase();
   Future<List<CinemaVO>?> getCinemaDayTimeSlotFromDataBase(String date);
   Future<List<SeatingPlanVO>?> getCinemaSeatingPlanFromDatabase();
-  Future<List<SnackVO>?> getSnackListFromDatabase();
-  Future<List<PaymentVO>?> getPaymentMethodListFromDatabase();
+  Stream<List<SnackVO>?> getSnackListFromDatabase();
+  Stream<List<PaymentVO>?> getPaymentMethodListFromDatabase();
   Future<List<UserCardVO>?> getUserCardsFromDatabase();
 
   /// stream
@@ -90,4 +81,8 @@ abstract class AuthModel {
   void loginWithFacebook(
     String accessToken,
   );
+
+  void getSnackList();
+
+  void getPaymentMethodList();
 }

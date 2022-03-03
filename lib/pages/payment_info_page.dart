@@ -68,19 +68,14 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
     //     widget.totalCost!);
 
     /// user card list
-    authModel.getUserTokenfromDatabase().then((value) {
-      authModel
-          .getProfile(
-        "Bearer " + value,
-      )
-          .then((card) {
-        setState(() {
-          cardList = card?.cards;
-        });
-      }).catchError((error) {
-        debugPrint(error.toString());
+    authModel.getProfile().then((card) {
+      setState(() {
+        cardList = card?.cards;
       });
+    }).catchError((error) {
+      debugPrint(error.toString());
     });
+
     authModel.getUserCardsFromDatabase().then((card) {
       setState(() {
         cardList = card;
@@ -166,18 +161,11 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
                 widget.cinema.cinemaId ?? 1,
                 widget.row,
                 widget.totalCost ?? 0.0);
-
-            authModel.getUserTokenfromDatabase().then((value) {
-              authModel
-                  .checkout("Bearer " + value, checkOutRequest)
-                  .then((value) {
-                setState(() {
-                  checkoutVO = value!;
-                });
-                _navigateToTicketInfoPage(context, checkoutVO, widget.movie);
+            authModel.checkout(checkOutRequest).then((value) {
+              setState(() {
+                checkoutVO = value!;
               });
-            }).catchError((error) {
-              debugPrint(error.toString());
+              _navigateToTicketInfoPage(context, checkoutVO, widget.movie);
             });
           },
           child: AppTextButton(

@@ -25,4 +25,13 @@ class SnackDao {
   Box<SnackVO> getSnackInfoBox() {
     return Hive.box<SnackVO>(BOX_NAME_SNACK_VO);
   }
+
+  /// reactive programming
+  Stream<void> getSnackListEventStream() {
+    return getSnackInfoBox().watch();
+  }
+
+  Stream<List<SnackVO>> getAllSnackInfoStream() {
+    return Stream.value(getAllSnackInfo());
+  }
 }

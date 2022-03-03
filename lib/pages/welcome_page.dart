@@ -10,7 +10,6 @@ import 'package:movie_booking/widgets/app_text_button.dart';
 import 'package:movie_booking/widgets/sub_text.dart';
 import 'package:movie_booking/widgets/title_text.dart';
 
-import '../data/vos/snack_vo.dart';
 import 'authentication_page.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -43,7 +42,6 @@ class _WelcomePageState extends State<WelcomePage> {
       debugPrint("error from db" + error.toString());
     });
 
-    
     super.initState();
   }
 

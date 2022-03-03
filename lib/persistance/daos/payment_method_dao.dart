@@ -25,4 +25,13 @@ class PaymentMethodDao {
   Box<PaymentVO> getPaymentMethodBox() {
     return Hive.box<PaymentVO>(BOX_NAME_PAYMENT_VO);
   }
+
+  /// reactive programming
+  Stream<void> getPaymentMethodEventStream() {
+    return getPaymentMethodBox().watch();
+  }
+
+  Stream<List<PaymentVO>> getAllPaymentMethodStream() {
+    return Stream.value(getAllPaymentMethod());
+  }
 }

@@ -65,7 +65,6 @@ class MovieModelImpl extends MovieModel {
   void getMovieDetails(int movieId) {
     _dataAgent.getMovieDetails(movieId).then((movie) {
       movieDao.saveSingleMove(movie!);
-      print("movie details save successfully");
     });
   }
 
@@ -110,8 +109,10 @@ class MovieModelImpl extends MovieModel {
 
   @override
   Stream<List<ActorVO>?> getCreditByMovieFromDatabase(int movieId) {
+    getCreditByMovie(movieId);
     return actorDao
         .getAllActorEventStream()
+        // ignore: void_checks
         .startWith(actorDao.getAllActorsStream())
         .map((event) => actorDao.getAllActors());
   }

@@ -112,13 +112,10 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
               String cardHolder = _cardHolderController.text.toString();
               String expDate = _expDateController.text.toString();
               int cardType = int.parse(_cardTypeController.text.toString());
-              authModel.getUserTokenfromDatabase().then((value) {
-                authModel
-                    .createCard("Bearer " + value, cardNum, cardHolder, expDate,
-                        cardType)
-                    .then((value) {
-                  Navigator.pop(context);
-                });
+              authModel
+                  .createCard(cardNum, cardHolder, expDate, cardType)
+                  .then((value) {
+                Navigator.pop(context);
               });
             }
           },

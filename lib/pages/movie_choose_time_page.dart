@@ -29,26 +29,22 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
   @override
   void initState() {
     // time slots
-    authModel.getUserTokenfromDatabase().then((value) {
-      authModel
-          .getCinemaDayTimeSlot("Bearer " + value, selectedDate)
-          .then((cinema) {
-        setState(() {
-          cinemaList = cinema ?? [];
-          print("time slot from network $cinemaList");
-        });
-
-        authModel.getCinemaDayTimeSlotFromDataBase(selectedDate).then((cinema) {
-          setState(() {
-            cinemaList = cinema ?? [];
-            print("time slot from db $cinemaList");
-          });
-        }).catchError((error) {
-          debugPrint(error.toString());
-        });
-      }).catchError((error) {
-        debugPrint(error.toString());
+    authModel.getCinemaDayTimeSlot(selectedDate).then((cinema) {
+      setState(() {
+        cinemaList = cinema ?? [];
+        print("time slot from network $cinemaList");
       });
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
+
+    authModel.getCinemaDayTimeSlotFromDataBase(selectedDate).then((cinema) {
+      setState(() {
+        cinemaList = cinema ?? [];
+        print("time slot from db $cinemaList");
+      });
+    }).catchError((error) {
+      debugPrint(error.toString());
     });
 
     /// from db
@@ -88,16 +84,13 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
                 onSelected: (selectDate) {
                   selectedDate = selectDate!;
                   selectedMovieTime = "";
-                  authModel.getUserTokenfromDatabase().then((value) {
-                    authModel
-                        .getCinemaDayTimeSlot("Bearer " + value, selectDate)
-                        .then((cinema) {
-                      setState(() {
-                        cinemaList = cinema;
-                      });
-                    }).catchError((error) {
-                      debugPrint(error.toString());
+
+                  authModel.getCinemaDayTimeSlot(selectDate).then((cinema) {
+                    setState(() {
+                      cinemaList = cinema;
                     });
+                  }).catchError((error) {
+                    debugPrint(error.toString());
                   });
 
                   /// from db

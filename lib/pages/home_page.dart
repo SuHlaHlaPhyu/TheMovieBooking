@@ -45,25 +45,16 @@ class _HomePageState extends State<HomePage> {
       if (token != null || token == "") {
         authModel.getUserDatafromDatabase().listen((user) {
           userData = user;
-          print("${userData?.userToken}");
+          print(" user data ========> ${userData?.userToken}");
         }).onError((error) {
           debugPrint(error.toString());
         });
       }
-      print("$token");
+      print("token ====> $token");
     }).catchError((error) {
       debugPrint("error from db" + error.toString());
     });
-
-    authModel.getUserTokenfromDatabase().then((value) {
-      authModel.getSnackList("Bearer " + value).then((value) {
-        setState(() {
-          snackList = value ?? [];
-        });
-      }).catchError((error) {
-        debugPrint(error.toString());
-      });
-    });
+    authModel.getSnackList();
 
     /// get now playing movie from db
     movieModel.getNowPlayingMoviesFromDatabase(1).listen((movieList) {
@@ -208,11 +199,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               onPressed: () {
-                authModel.getUserTokenfromDatabase().then((value) {
-                  authModel.logout("Bearer " + value).then((value) {
-                    _navigateToWelcomeScreen(context);
-                  });
-                });
+                authModel.logout();
+                _navigateToWelcomeScreen(context);
               },
             ),
           ],
