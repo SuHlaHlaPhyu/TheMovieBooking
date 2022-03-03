@@ -140,21 +140,12 @@ class _AuthenticationPageState extends State<AuthenticationPage>
                       false,
                       onTap: () {
                         if (loginFormKey.currentState!.validate()) {
-                          authModel
-                              .loginWithEmail(_phoneController.text.toString(),
-                                  _emailController.text.toString())
-                              .then((user) {
-                            code = user[0];
-                            message = user[1];
-                            userData = user[2];
-                            token = user[3];
-                            print(" login user =========> $user");
-                            _navigateToHomeScreen(
-                              context,
-                            );
-                          }).catchError((error) {
-                            debugPrint("error from network" + error.toString());
-                          });
+                          authModel.loginWithEmail(
+                              _phoneController.text.toString(),
+                              _emailController.text.toString());
+                          _navigateToHomeScreen(
+                            context,
+                          );
                         }
                       },
                       onTapGoogle: () {
@@ -166,19 +157,11 @@ class _AuthenticationPageState extends State<AuthenticationPage>
                         );
                         _googleSignIn.signIn().then((googleAccount) {
                           googleAccount?.authentication.then((authentication) {
-                            authModel
-                                .loginWithGoogle(
-                                    authentication.accessToken ?? "")
-                                .then((user) {
-                              code = user[0];
-                              message = user[1];
-                              userData = user[2];
-                              token = user[3];
-                              print(" login google user =========> $user");
-                              _navigateToHomeScreen(
-                                context,
-                              );
-                            });
+                            authModel.loginWithGoogle(
+                                authentication.accessToken ?? "");
+                            _navigateToHomeScreen(
+                              context,
+                            );
                             print(
                                 "authentication accessToken ${authentication.accessToken}");
                           });
@@ -191,19 +174,11 @@ class _AuthenticationPageState extends State<AuthenticationPage>
                         ]).then((value) {
                           print(
                               "accessToken =======> ${value.accessToken?.token}");
-                          authModel
-                              .loginWithFacebook(
-                                  value.accessToken?.userId ?? "")
-                              .then((user) {
-                            code = user[0];
-                            message = user[1];
-                            userData = user[2];
-                            token = user[3];
-                            print(" login facebook user =========> $user");
-                            _navigateToHomeScreen(
-                              context,
-                            );
-                          });
+                          authModel.loginWithFacebook(
+                              value.accessToken?.userId ?? "");
+                          _navigateToHomeScreen(
+                            context,
+                          );
                         });
                       },
                     ),
@@ -222,26 +197,16 @@ class _AuthenticationPageState extends State<AuthenticationPage>
                         if (signupFormKey.currentState!.validate()) {
                           print(
                               "info ====> \n name : ${_nameController.text} \n email : ${_phoneController.text} \n password : ${_emailController.text} \n phone : ${_passwordController.text} \n");
-                          authModel
-                              .registerWithEmail(
-                                  _nameController.text.toString(),
-                                  _phoneController.text.toString(),
-                                  _passwordController.text.toString(),
-                                  _emailController.text.toString(),
-                                  googleToken,
-                                  facebookToken)
-                              .then((user) {
-                            code = user[0];
-                            message = user[1];
-                            userData = user[2];
-                            token = user[3];
-                            print(" register user =========> $user");
-                            _navigateToHomeScreen(
-                              context,
-                            );
-                          }).catchError((error) {
-                            debugPrint(error.toString());
-                          });
+                          authModel.registerWithEmail(
+                              _nameController.text.toString(),
+                              _phoneController.text.toString(),
+                              _passwordController.text.toString(),
+                              _emailController.text.toString(),
+                              googleToken,
+                              facebookToken);
+                          _navigateToHomeScreen(
+                            context,
+                          );
                         }
                       },
                       onTapGoogle: () {
@@ -272,20 +237,6 @@ class _AuthenticationPageState extends State<AuthenticationPage>
                         });
                       },
                       onTapFacebook: () async {
-                        //final LoginResult result =
-                        //     await FacebookAuth.instance.login(
-                        //   permissions: [
-                        //     'public_profile',
-                        //     'email',
-                        //   ],
-                        // );
-                        // if (result.status == LoginStatus.success) {
-                        //   final AccessToken accessToken = result.accessToken!;
-                        //   print("accessToken =======> $accessToken");
-                        // } else {
-                        //   print("result status ===> ${result.status}");
-                        //   print("result message ====> ${result.message}");
-                        // }
                         FacebookAuth.instance.login(permissions: [
                           "public_profile",
                           "email"
@@ -478,63 +429,6 @@ class AuthButtonView extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () => onTap(),
-          // onTap: () async {
-          //   if (formKey.currentState!.validate()) {
-          //     if (isSinup) {
-          //       // register
-          //       authModel
-          //           .registerWithEmail(
-          //               name.text.toString(),
-          //               email.text.toString(),
-          //               phone.text.toString(),
-          //               password.text.toString())
-          //           .then((user) {
-          //         code = user[0];
-          //         message = user[1];
-          //         userData = user[2];
-          //         token = user[3];
-          //         if (code == 200) {
-          //           _navigateToHomeScreen(
-          //             context,
-          //             userData!,
-          //           );
-          //         } else {
-          //           Fluttertoast.showToast(
-          //             msg: message ?? "Register Error",
-          //             toastLength: Toast.LENGTH_LONG,
-          //             gravity: ToastGravity.CENTER,
-          //           );
-          //         }
-          //       }).catchError((error) {
-          //         debugPrint(error.toString());
-          //       });
-          //     } else {
-          //       await authModel
-          //           .loginWithEmail(
-          //               email.text.toString(), password.text.toString())
-          //           .then((user) {
-          //         code = user[0];
-          //         message = user[1];
-          //         userData = user[2];
-          //         token = user[3];
-          //         if (code == 200) {
-          //           _navigateToHomeScreen(
-          //             context,
-          //             userData!,
-          //           );
-          //         } else {
-          //           Fluttertoast.showToast(
-          //             msg: message ?? "Login Error",
-          //             toastLength: Toast.LENGTH_LONG,
-          //             gravity: ToastGravity.CENTER,
-          //           );
-          //         }
-          //       }).catchError((error) {
-          //         debugPrint("error from network" + error.toString());
-          //       });
-          //     }
-          //   }
-          //},
           child: AppTextButton(
             CONFIRM_BUTTON_TEXT,
           ),

@@ -12,6 +12,7 @@ class MovieDao {
   MovieDao._internal();
 
   void saveAllMovies(List<MovieVO> movieList) async {
+    // ignore: prefer_for_elements_to_map_fromiterable
     Map<int, MovieVO> movieMap = Map.fromIterable(movieList,
         key: (movie) => movie.id, value: (movie) => movie);
     await getMovieBox().putAll(movieMap);
@@ -64,6 +65,10 @@ class MovieDao {
     return Stream.value(getAllMovies()
         .where((element) => element.isComingSoon ?? false)
         .toList());
+  }
+
+  Stream<MovieVO?> getMovieByIdStream(int movieId) {
+    return Stream.value(getMoveById(movieId));
   }
 
   Box<MovieVO> getMovieBox() {

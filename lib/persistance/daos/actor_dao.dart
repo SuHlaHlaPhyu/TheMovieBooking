@@ -25,4 +25,13 @@ class ActorDao {
   Box<ActorVO> getActorBox() {
     return Hive.box<ActorVO>(BOX_NAME_ACTOR_VO);
   }
+
+  /// reactive programming
+  Stream<void> getAllActorEventStream() {
+    return getActorBox().watch();
+  }
+
+  Stream<List<ActorVO>> getAllActorsStream() {
+    return Stream.value(getAllActors());
+  }
 }

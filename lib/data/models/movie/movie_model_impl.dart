@@ -21,33 +21,20 @@ class MovieModelImpl extends MovieModel {
   ActorDao actorDao = ActorDao();
 
   /// from network
-  @override
-  Future<List<List<ActorVO>?>> getCreditByMovie(int movieId) {
-    return _dataAgent.getCreditByMovie(movieId).then((value) {
-      List<ActorVO>? actorList = value.first;
-      actorDao.saveAllMovies(actorList!);
-      return Future.value(value);
-    });
-  }
-
-  @override
-  Future<MovieVO?> getMovieDetails(int movieId) {
-    return _dataAgent.getMovieDetails(movieId).then((movie) {
-      movieDao.saveSingleMove(movie!);
-      return Future.value(movie);
-    });
-  }
+  // @override
+  // Future<List<List<ActorVO>?>> getCreditByMovie(int movieId) {
+  //   return _dataAgent.getCreditByMovie(movieId).then((value) {
+  //     List<ActorVO>? actorList = value.first;
+  //     actorDao.saveAllMovies(actorList!);
+  //     return Future.value(value);
+  //   });
+  // }
 
   /// from database
-  @override
-  Future<List<ActorVO>?> getCreditByMovieFromDatabase(int movieId) {
-    return Future.value(actorDao.getAllActors().toList());
-  }
-
-  @override
-  Future<MovieVO?> getMovieDetailsFromDatabase(int movieId) {
-    return Future.value(movieDao.getMoveById(movieId));
-  }
+  // @override
+  // Future<List<ActorVO>?> getCreditByMovieFromDatabase(int movieId) {
+  //   return Future.value(actorDao.getAllActors().toList());
+  // }
 
   /// Stream
   @override
@@ -59,7 +46,6 @@ class MovieModelImpl extends MovieModel {
         return movie;
       }).toList();
       movieDao.saveAllMovies(comingSoonMovies);
-      print("coming soon save successfully");
     });
   }
 
@@ -72,15 +58,32 @@ class MovieModelImpl extends MovieModel {
         return movie;
       }).toList();
       movieDao.saveAllMovies(nowPlayingMovies);
-      print("coming soon save successfully");
     });
   }
 
+  @override
+  void getMovieDetails(int movieId) {
+    _dataAgent.getMovieDetails(movieId).then((movie) {
+      movieDao.saveSingleMove(movie!);
+      print("movie details save successfully");
+    });
+  }
+
+  @override
+  void getCreditByMovie(int movieId) {
+    _dataAgent.getCreditByMovie(movieId).then((value) {
+      List<ActorVO>? actorList = value.first;
+      actorDao.saveAllMovies(actorList!);
+    });
+  }
+
+  /// from database
   @override
   Stream<List<MovieVO>?> getComingSoonMoviesFromDatabase(int page) {
     getComingSoonMovies(1);
     return movieDao
         .getAllMovieEventStream()
+        // ignore: void_checks
         .startWith(movieDao.getComingSoonMoviesStream())
         .map((event) => movieDao.getComingSoonMovies());
   }
@@ -90,8 +93,27 @@ class MovieModelImpl extends MovieModel {
     getNowPlayingMovies(1);
     return movieDao
         .getAllMovieEventStream()
+        // ignore: void_checks
         .startWith(movieDao.getNowPlayingMovieStream())
         .map((event) => movieDao.getComingSoonMovies());
+  }
+
+  @override
+  Stream<MovieVO?> getMovieDetailsFromDatabase(int movieId) {
+    getMovieDetails(movieId);
+    return movieDao
+        .getAllMovieEventStream()
+        // ignore: void_checks
+        .startWith(movieDao.getMovieByIdStream(movieId))
+        .map((event) => movieDao.getMoveById(movieId));
+  }
+
+  @override
+  Stream<List<ActorVO>?> getCreditByMovieFromDatabase(int movieId) {
+    return actorDao
+        .getAllActorEventStream()
+        .startWith(actorDao.getAllActorsStream())
+        .map((event) => actorDao.getAllActors());
   }
 }
 

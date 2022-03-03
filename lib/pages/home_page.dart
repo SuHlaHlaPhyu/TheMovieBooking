@@ -43,10 +43,10 @@ class _HomePageState extends State<HomePage> {
     authModel.getUserTokenfromDatabase().then((value) {
       token = value;
       if (token != null || token == "") {
-        authModel.getUserDatafromDatabase().then((user) {
+        authModel.getUserDatafromDatabase().listen((user) {
           userData = user;
           print("${userData?.userToken}");
-        }).catchError((error) {
+        }).onError((error) {
           debugPrint(error.toString());
         });
       }

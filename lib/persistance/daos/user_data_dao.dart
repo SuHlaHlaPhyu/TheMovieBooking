@@ -27,11 +27,20 @@ class UserDataDao {
     await getUserDataBox().clear();
   }
 
-  // void clearUserData() async {
-  //   await getUserDataBox().delete("user");
-  // }
-
   Box<UserDataVO> getUserDataBox() {
     return Hive.box<UserDataVO>(BOX_NAME_USER_DATA_VO);
+  }
+
+  /// reactive programming
+  Stream<void> getUserDataEventStream() {
+    return getUserDataBox().watch();
+  }
+
+  Stream<UserDataVO?> getUserDataStream() {
+    return Stream.value(getUserData());
+  }
+
+  Stream<String?> getUserTokenStream() {
+    return Stream.value(getUserToken());
   }
 }

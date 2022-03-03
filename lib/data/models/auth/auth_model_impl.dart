@@ -35,29 +35,30 @@ class AuthModelImpl extends AuthModel {
   PaymentMethodDao paymentMethodDao = PaymentMethodDao();
   UserCardDao userCardDao = UserCardDao();
 
-  @override
-  Future<List> loginWithEmail(String email, String password) {
-    return _dataAgent.loginWithEmail(email, password).then((value) async {
-      UserDataVO user = value[2];
-      user.userToken = value[3];
-      userDataDao.saveUserData(user);
-      return Future.value(value);
-    });
-  }
+  /// from network
+  // @override
+  // Future<List> loginWithEmail(String email, String password) {
+  //   return _dataAgent.loginWithEmail(email, password).then((value) async {
+  //     UserDataVO user = value[2];
+  //     user.userToken = value[3];
+  //     userDataDao.saveUserData(user);
+  //     return Future.value(value);
+  //   });
+  // }
 
-  @override
-  Future<List> registerWithEmail(String name, String email, String phone,
-      String password, String googleToken, String facebookToken) {
-    return _dataAgent
-        .registerWithEmail(
-            name, email, phone, password, googleToken, facebookToken)
-        .then((value) async {
-      UserDataVO user = value[2];
-      user.userToken = value[3];
-      userDataDao.saveUserData(user);
-      return Future.value(value);
-    });
-  }
+  // @override
+  // Future<List> registerWithEmail(String name, String email, String phone,
+  //     String password, String googleToken, String facebookToken) {
+  //   return _dataAgent
+  //       .registerWithEmail(
+  //           name, email, phone, password, googleToken, facebookToken)
+  //       .then((value) async {
+  //     UserDataVO user = value[2];
+  //     user.userToken = value[3];
+  //     userDataDao.saveUserData(user);
+  //     return Future.value(value);
+  //   });
+  // }
 
   @override
   Future<List<CinemaVO>?> getCinemaDayTimeSlot(String token, String date) {
@@ -135,9 +136,35 @@ class AuthModelImpl extends AuthModel {
   }
 
   @override
-  Future<UserDataVO> getUserDatafromDatabase() {
-    return Future.value(userDataDao.getUserData());
+  Future<CheckoutVO?> checkout(String token, CheckOutRequest request) {
+    return _dataAgent.checkOut(token, request);
   }
+
+  // @override
+  // Future<List> loginWithFacebook(String accessToken) {
+  //   return _dataAgent.loginWithFacebook(accessToken).then((value) async {
+  //     UserDataVO user = value[2];
+  //     user.userToken = value[3];
+  //     userDataDao.saveUserData(user);
+  //     return Future.value(value);
+  //   });
+  // }
+
+  // @override
+  // Future<List> loginWithGoogle(String accessToken) {
+  //   return _dataAgent.loginWithGoogle(accessToken).then((value) async {
+  //     UserDataVO user = value[2];
+  //     user.userToken = value[3];
+  //     userDataDao.saveUserData(user);
+  //     return Future.value(value);
+  //   });
+  // }
+
+  /// from database
+  // @override
+  // Future<UserDataVO> getUserDatafromDatabase() {
+  //   return Future.value(userDataDao.getUserData());
+  // }
 
   @override
   Future<String> getUserTokenfromDatabase() {
@@ -169,28 +196,59 @@ class AuthModelImpl extends AuthModel {
     return Future.value(userCardDao.getAllUserCards());
   }
 
+  /// reactive
   @override
-  Future<CheckoutVO?> checkout(String token, CheckOutRequest request) {
-    return _dataAgent.checkOut(token, request);
-  }
-
-  @override
-  Future<List> loginWithFacebook(String accessToken) {
-    return _dataAgent.loginWithFacebook(accessToken).then((value) async {
+  void loginWithEmail(String email, String password) {
+    _dataAgent.loginWithEmail(email, password).then((value) async {
       UserDataVO user = value[2];
       user.userToken = value[3];
       userDataDao.saveUserData(user);
-      return Future.value(value);
     });
   }
 
   @override
-  Future<List> loginWithGoogle(String accessToken) {
-    return _dataAgent.loginWithGoogle(accessToken).then((value) async {
+  void registerWithEmail(String name, String email, String phone,
+      String password, String googleToken, String facebookToken) {
+    _dataAgent
+        .registerWithEmail(
+            name, email, phone, password, googleToken, facebookToken)
+        .then((value) async {
       UserDataVO user = value[2];
       user.userToken = value[3];
       userDataDao.saveUserData(user);
-      return Future.value(value);
     });
   }
+
+  @override
+  void loginWithFacebook(String accessToken) {
+    _dataAgent.loginWithFacebook(accessToken).then((value) async {
+      UserDataVO user = value[2];
+      user.userToken = value[3];
+      userDataDao.saveUserData(user);
+    });
+  }
+
+  @override
+  void loginWithGoogle(String accessToken) {
+    _dataAgent.loginWithGoogle(accessToken).then((value) async {
+      UserDataVO user = value[2];
+      user.userToken = value[3];
+      userDataDao.saveUserData(user);
+    });
+  }
+
+  /// from database
+  @override
+  Stream<UserDataVO?> getUserDatafromDatabase() {
+    return userDataDao
+        .getUserDataEventStream()
+        .map((event) => userDataDao.getUserData());
+  }
+
+  // @override
+  // Stream<String?> getUserTokenfromDatabase() {
+  //   return userDataDao
+  //       .getUserDataEventStream()
+  //       .map((event) => userDataDao.getUserToken());
+  // }
 }

@@ -3,16 +3,18 @@ import 'package:movie_booking/data/vos/movie_vo.dart';
 
 abstract class MovieModel {
   /// network
-  Future<MovieVO?> getMovieDetails(int movieId);
-  Future<List<List<ActorVO>?>> getCreditByMovie(int movieId);
+  // Future<MovieVO?> getMovieDetails(int movieId);
+  //Future<List<List<ActorVO>?>> getCreditByMovie(int movieId);
 
   /// database
   Stream<List<MovieVO>?> getNowPlayingMoviesFromDatabase(int page);
   Stream<List<MovieVO>?> getComingSoonMoviesFromDatabase(int page);
-  Future<MovieVO?> getMovieDetailsFromDatabase(int movieId);
-  Future<List<ActorVO>?> getCreditByMovieFromDatabase(int movieId);
+  Stream<MovieVO?> getMovieDetailsFromDatabase(int movieId);
+  Stream<List<ActorVO>?> getCreditByMovieFromDatabase(int movieId);
 
   /// stream
   void getNowPlayingMovies(int page);
   void getComingSoonMovies(int page);
+  void getMovieDetails(int movieId);
+  void getCreditByMovie(int movieId);
 }
