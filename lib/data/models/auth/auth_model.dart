@@ -11,24 +11,6 @@ import 'package:movie_booking/network/checkout_request.dart';
 
 abstract class AuthModel {
   /// from network
-  // Future<List> loginWithEmail(
-  //   String email,
-  //   String password,
-  // );
-  // Future<List> registerWithEmail(
-  //   String name,
-  //   String email,
-  //   String phone,
-  //   String password,
-  //   String googleToken,
-  //   String facebookToken,
-  // );
-  // Future<List> loginWithGoogle(
-  //   String accessToken,
-  // );
-  // Future<List> loginWithFacebook(
-  //   String accessToken,
-  // );
   Future<List> logout();
   Future<List<CinemaVO>?> getCinemaDayTimeSlot(
     String date,
@@ -37,17 +19,12 @@ abstract class AuthModel {
     int cinemaDaytimeslotId,
     String bookingDate,
   );
-  // Future<List<SnackVO>?> getSnackList(
-  //   String token,
-  // );
   Future<List<UserCardVO>?> createCard(
     int cardNumber,
     String cardHolder,
     String expirationDate,
     int cvc,
   );
-  Future<UserDataVO?> getProfile();
-  // Future<List<PaymentVO>?> getPaymentMethodList();
 
   Future<CheckoutVO?> checkout(CheckOutRequest request);
 
@@ -58,7 +35,7 @@ abstract class AuthModel {
   Future<List<SeatingPlanVO>?> getCinemaSeatingPlanFromDatabase();
   Stream<List<SnackVO>?> getSnackListFromDatabase();
   Stream<List<PaymentVO>?> getPaymentMethodListFromDatabase();
-  Future<List<UserCardVO>?> getUserCardsFromDatabase();
+  Stream<List<UserCardVO>?> getUserCardsFromDatabase();
 
   /// stream
   void loginWithEmail(
@@ -85,4 +62,5 @@ abstract class AuthModel {
   void getSnackList();
 
   void getPaymentMethodList();
+  void getProfile();
 }

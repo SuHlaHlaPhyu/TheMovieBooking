@@ -115,6 +115,7 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
               authModel
                   .createCard(cardNum, cardHolder, expDate, cardType)
                   .then((value) {
+                authModel.getProfile();
                 Navigator.pop(context);
               });
             }

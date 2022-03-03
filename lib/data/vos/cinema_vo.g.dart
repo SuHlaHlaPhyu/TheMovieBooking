@@ -20,19 +20,22 @@ class CinemaVOAdapter extends TypeAdapter<CinemaVO> {
       fields[0] as int?,
       fields[1] as String?,
       (fields[2] as List?)?.cast<TimeslotVO>(),
+      (fields[3] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CinemaVO obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.cinemaId)
       ..writeByte(1)
       ..write(obj.cinema)
       ..writeByte(2)
-      ..write(obj.timeslots);
+      ..write(obj.timeslots)
+      ..writeByte(3)
+      ..write(obj.dates);
   }
 
   @override
@@ -56,10 +59,12 @@ CinemaVO _$CinemaVOFromJson(Map<String, dynamic> json) => CinemaVO(
       (json['timeslots'] as List<dynamic>?)
           ?.map((e) => TimeslotVO.fromJson(e as Map<String, dynamic>))
           .toList(),
+      (json['dates'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$CinemaVOToJson(CinemaVO instance) => <String, dynamic>{
       'cinema_id': instance.cinemaId,
       'cinema': instance.cinema,
       'timeslots': instance.timeslots,
+      'dates': instance.dates,
     };

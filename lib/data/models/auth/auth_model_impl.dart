@@ -38,7 +38,7 @@ class AuthModelImpl extends AuthModel {
 
   /// from network
 
-  @override
+  // @override
   Future<List<CinemaVO>?> getCinemaDayTimeSlot(String date) {
     String token = "Bearer " + userDataDao.getUserToken().toString();
     return _dataAgent.getCinemaDayTimeSlot(token, date).then((value) {
@@ -90,47 +90,10 @@ class AuthModelImpl extends AuthModel {
   }
 
   @override
-  Future<UserDataVO?> getProfile() {
-    String token = "Bearer " + userDataDao.getUserToken().toString();
-    return _dataAgent.getProfile(token).then((value) {
-      userCardDao.saveAllUserCards(value!.cards!);
-      return Future.value(value);
-    });
-  }
-
-  @override
   Future<CheckoutVO?> checkout(CheckOutRequest request) {
     String token = "Bearer " + userDataDao.getUserToken().toString();
     return _dataAgent.checkOut(token, request);
   }
-
-  // @override
-  // Future<List<PaymentVO>?> getPaymentMethodList() {
-  //   String token = "Bearer " + userDataDao.getUserToken().toString();
-  //   return _dataAgent.getPaymentMethodList(token).then((value) {
-  //     paymentMethodDao.saveAllPaymentMethod(value!);
-  //     return Future.value(value);
-  //   });
-  // }
-
-  // @override
-  // Future<List> loginWithFacebook(String accessToken) {
-  //   return _dataAgent.loginWithFacebook(accessToken).then((value) async {
-  //     UserDataVO user = value[2];
-  //     user.userToken = value[3];
-  //     userDataDao.saveUserData(user);
-  //     return Future.value(value);
-  //   });
-  // }
-  // @override
-  // Future<List> loginWithGoogle(String accessToken) {
-  //   return _dataAgent.loginWithGoogle(accessToken).then((value) async {
-  //     UserDataVO user = value[2];
-  //     user.userToken = value[3];
-  //     userDataDao.saveUserData(user);
-  //     return Future.value(value);
-  //   });
-  // }
 
   /// from database
 
@@ -147,11 +110,6 @@ class AuthModelImpl extends AuthModel {
   @override
   Future<List<SeatingPlanVO>?> getCinemaSeatingPlanFromDatabase() {
     return Future.value(seatPlanDao.getAllSeatPlan());
-  }
-
-  @override
-  Future<List<UserCardVO>?> getUserCardsFromDatabase() {
-    return Future.value(userCardDao.getAllUserCards());
   }
 
   /// reactive
@@ -215,6 +173,14 @@ class AuthModelImpl extends AuthModel {
     });
   }
 
+  @override
+  void getProfile() {
+    String token = "Bearer " + userDataDao.getUserToken().toString();
+    _dataAgent.getProfile(token).then((value) {
+      userCardDao.saveAllUserCards(value!.cards!);
+    });
+  }
+
   /// from database
   @override
   Stream<UserDataVO?> getUserDatafromDatabase() {
@@ -241,5 +207,13 @@ class AuthModelImpl extends AuthModel {
         .getPaymentMethodEventStream()
         .startWith(paymentMethodDao.getAllPaymentMethodStream())
         .map((event) => paymentMethodDao.getAllPaymentMethod());
+  }
+
+  @override
+  Stream<List<UserCardVO>?> getUserCardsFromDatabase() {
+    return userCardDao
+        .getUserCardEventStream()
+        .startWith(userCardDao.getAllUserCardsStream())
+        .map((event) => userCardDao.getAllUserCards());
   }
 }

@@ -25,4 +25,13 @@ class UserCardDao {
   Box<UserCardVO> getUserCardsBox() {
     return Hive.box<UserCardVO>(BOX_NAME_USER_CARD_VO);
   }
+
+  /// reactive programming
+  Stream<void> getUserCardEventStream() {
+    return getUserCardsBox().watch();
+  }
+
+  Stream<List<UserCardVO>> getAllUserCardsStream() {
+    return Stream.value(getAllUserCards());
+  }
 }

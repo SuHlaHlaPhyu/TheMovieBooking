@@ -19,14 +19,10 @@ class CinemaVO {
   @HiveField(2)
   List<TimeslotVO>? timeslots;
 
-  // @HiveField(3)
-  // bool? isSelected;
+  @HiveField(3)
+  List<String>? dates;
 
-  CinemaVO(
-    this.cinemaId,
-    this.cinema,
-    this.timeslots,
-  );
+  CinemaVO(this.cinemaId, this.cinema, this.timeslots, this.dates);
 
   factory CinemaVO.fromJson(Map<String, dynamic> json) =>
       _$CinemaVOFromJson(json);
@@ -35,6 +31,6 @@ class CinemaVO {
 
   @override
   String toString() {
-    return 'CinemaVO{cinema_id: $cinemaId, cinema: $cinema, timeslots: $timeslots,}';
+    return 'CinemaVO{cinema_id: $cinemaId, cinema: $cinema, timeslots: $timeslots, dates:$dates}';
   }
 }

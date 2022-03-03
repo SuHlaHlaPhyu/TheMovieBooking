@@ -53,34 +53,13 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
 
   @override
   void initState() {
-    // checkOutRequest = CheckOutRequest(cinemaDayTimeSlotId, seatNumber,
-    //     bookingDate, movieId, cardId, snacks, cinemaId, row, totalPrice);
-
-    // checkOutRequest = CheckOutRequest(
-    //     widget.timeslot,
-    //     widget.seat,
-    //     widget.date,
-    //     widget.movie.id!,
-    //     cardId,
-    //     snacks,
-    //     widget.cinema.cinemaId!,
-    //     widget.row,
-    //     widget.totalCost!);
-
     /// user card list
-    authModel.getProfile().then((card) {
-      setState(() {
-        cardList = card?.cards;
-      });
-    }).catchError((error) {
-      debugPrint(error.toString());
-    });
-
-    authModel.getUserCardsFromDatabase().then((card) {
+    authModel.getProfile();
+    authModel.getUserCardsFromDatabase().listen((card) {
       setState(() {
         cardList = card;
       });
-    }).catchError((error) {
+    }).onError((error) {
       debugPrint(error.toString());
     });
 
@@ -121,7 +100,6 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
               options: CarouselOptions(
                 onPageChanged: (index, reason) {
                   cardId = cardList?[index].id ?? 0;
-                  print("tapped");
                 },
                 height: BARCODE_WIDTH,
                 aspectRatio: 2.0,
