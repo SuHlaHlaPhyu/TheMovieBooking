@@ -54,7 +54,7 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
   @override
   void initState() {
     /// user card list
-    authModel.getProfile();
+    //authModel.getProfile();
     authModel.getUserCardsFromDatabase().listen((card) {
       setState(() {
         cardList = card;

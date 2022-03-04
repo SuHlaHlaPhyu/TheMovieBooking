@@ -25,4 +25,38 @@ class CinemaDayTimeslotDao {
   Box<CinemaListForHiveVO> getCinemaDayTimeslotBox() {
     return Hive.box<CinemaListForHiveVO>(BOX_NAME_CINEMA_LIST_FOR_HIVE_VO);
   }
+
+  /// reactive programming
+  Stream<void> getCinemaEventStream() {
+    return getCinemaDayTimeslotBox().watch();
+  }
+
+  Stream<CinemaListForHiveVO?> getAllCinemaDayTimeslotStream(String date) {
+    return Stream.value(getAllCinemaDayTimeslot(date));
+  }
+
+  // void saveAllCinemaDayTimeslot(List<CinemaVO> cinemaList, String date) async {
+  //   List<CinemaVO> updatedCinemaList = cinemaList.map((cinema) {
+  //     CinemaVO? cinemaFromHive = getCinemaById(cinema.cinemaId ?? 1);
+  //     if (cinemaFromHive == null) {
+  //       return cinema;
+  //     } else {
+  //       cinemaFromHive.dates?.add(date);
+  //       return cinemaFromHive;
+  //     }
+  //   }).toList();
+  //   // ignore: prefer_for_elements_to_map_fromiterable
+  //   Map<int, CinemaVO> cinemaMap = Map.fromIterable(updatedCinemaList,
+  //       key: (cinema) => cinema.cinemaId, value: (cinema) => cinema);
+  //   await getCinemaDayTimeslotBox().putAll(cinemaMap);
+  //   print("cinema list save successfully $cinemaMap");
+  // }
+
+  // CinemaVO? getCinemaById(int cinemaId) {
+  //   return getCinemaDayTimeslotBox().get(cinemaId);
+  // }
+
+  // Box<CinemaVO> getCinemaDayTimeslotBox() {
+  //   return Hive.box<CinemaVO>(BOX_NAME_TIMESLOT_VO);
+  // }
 }

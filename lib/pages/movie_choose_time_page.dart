@@ -29,21 +29,21 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
   @override
   void initState() {
     // time slots
-    authModel.getCinemaDayTimeSlot(selectedDate).then((cinema) {
-      setState(() {
-        cinemaList = cinema ?? [];
-        print("time slot from network $cinemaList");
-      });
-    }).catchError((error) {
-      debugPrint(error.toString());
-    });
+    // authModel.getCinemaDayTimeSlot(selectedDate).then((cinema) {
+    //   setState(() {
+    //     cinemaList = cinema ?? [];
+    //     print("time slot from network $cinemaList");
+    //   });
+    // }).catchError((error) {
+    //   debugPrint(error.toString());
+    // });
 
-    authModel.getCinemaDayTimeSlotFromDataBase(selectedDate).then((cinema) {
+    authModel.getCinemaDayTimeSlotFromDataBase(selectedDate).listen((cinema) {
       setState(() {
         cinemaList = cinema ?? [];
         print("time slot from db $cinemaList");
       });
-    }).catchError((error) {
+    }).onError((error) {
       debugPrint(error.toString());
     });
 
@@ -85,22 +85,22 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
                   selectedDate = selectDate!;
                   selectedMovieTime = "";
 
-                  authModel.getCinemaDayTimeSlot(selectDate).then((cinema) {
-                    setState(() {
-                      cinemaList = cinema;
-                    });
-                  }).catchError((error) {
-                    debugPrint(error.toString());
-                  });
+                  // authModel.getCinemaDayTimeSlot(selectDate).then((cinema) {
+                  //   setState(() {
+                  //     cinemaList = cinema;
+                  //   });
+                  // }).catchError((error) {
+                  //   debugPrint(error.toString());
+                  // });
 
                   /// from db
                   authModel
                       .getCinemaDayTimeSlotFromDataBase(selectedDate)
-                      .then((cinema) {
+                      .listen((cinema) {
                     setState(() {
                       cinemaList = cinema;
                     });
-                  }).catchError((error) {
+                  }).onError((error) {
                     debugPrint(error.toString());
                   });
                 },

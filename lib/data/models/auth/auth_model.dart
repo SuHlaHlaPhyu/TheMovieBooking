@@ -12,9 +12,9 @@ import 'package:movie_booking/network/checkout_request.dart';
 abstract class AuthModel {
   /// from network
   Future<List> logout();
-  Future<List<CinemaVO>?> getCinemaDayTimeSlot(
-    String date,
-  );
+  // Future<List<CinemaVO>?> getCinemaDayTimeSlot(
+  //   String date,
+  // );
   Future<List<List<SeatingPlanVO>>?> getCinemaSeatingPlan(
     int cinemaDaytimeslotId,
     String bookingDate,
@@ -31,7 +31,7 @@ abstract class AuthModel {
   /// from database
   Stream<UserDataVO?> getUserDatafromDatabase();
   Future<String> getUserTokenfromDatabase();
-  Future<List<CinemaVO>?> getCinemaDayTimeSlotFromDataBase(String date);
+  Stream<List<CinemaVO>?> getCinemaDayTimeSlotFromDataBase(String date);
   Future<List<SeatingPlanVO>?> getCinemaSeatingPlanFromDatabase();
   Stream<List<SnackVO>?> getSnackListFromDatabase();
   Stream<List<PaymentVO>?> getPaymentMethodListFromDatabase();
@@ -63,4 +63,8 @@ abstract class AuthModel {
 
   void getPaymentMethodList();
   void getProfile();
+
+  void getCinemaDayTimeSlot(
+    String date,
+  );
 }

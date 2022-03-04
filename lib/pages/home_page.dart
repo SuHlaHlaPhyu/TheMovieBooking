@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                 height: MARGIN_MEDIUM_3,
               ),
               NowShowingSectionView(
-                COMING_SOON_MOVIE_LIST_TEXT,
+                NOW_SHOWING_MOVIE_LIST_TEXT,
                 movieList: nowShowingMovies,
                 onTapMovie: (movieId) => _navigateToMovieDetailsScreen(
                   context,
@@ -517,10 +517,16 @@ class MovieView extends StatelessWidget {
         const SizedBox(
           height: MARGIN_MEDIUM,
         ),
-        Text(
-          movie?.title ?? "",
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
+        Container(
+          width: HOME_SCREEN_MOVIE_WIDTH,
+          child: Center(
+            child: Text(
+              movie?.title ?? "",
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
         const SizedBox(

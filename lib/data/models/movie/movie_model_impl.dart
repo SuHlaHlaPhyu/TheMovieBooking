@@ -94,7 +94,7 @@ class MovieModelImpl extends MovieModel {
         .getAllMovieEventStream()
         // ignore: void_checks
         .startWith(movieDao.getNowPlayingMovieStream())
-        .map((event) => movieDao.getComingSoonMovies());
+        .map((event) => movieDao.getNowPlayingMovies());
   }
 
   @override

@@ -39,21 +39,21 @@ class AuthModelImpl extends AuthModel {
   /// from network
 
   // @override
-  Future<List<CinemaVO>?> getCinemaDayTimeSlot(String date) {
-    String token = "Bearer " + userDataDao.getUserToken().toString();
-    return _dataAgent.getCinemaDayTimeSlot(token, date).then((value) {
-      List<CinemaVO> timeSlotList = value!.map((timeSlot) {
-        timeSlot.timeslots?.map((time) {
-          time.isSelected = false;
-          return time;
-        }).toList();
-        return timeSlot;
-      }).toList();
-      CinemaListForHiveVO cinemaList = CinemaListForHiveVO(timeSlotList);
-      timeSlotDao.saveAllCinemaDayTimeslot(date, cinemaList);
-      return Future.value(value);
-    });
-  }
+  // Future<List<CinemaVO>?> getCinemaDayTimeSlot(String date) {
+  //   String token = "Bearer " + userDataDao.getUserToken().toString();
+  //   return _dataAgent.getCinemaDayTimeSlot(token, date).then((value) {
+  //     List<CinemaVO> timeSlotList = value!.map((timeSlot) {
+  //       timeSlot.timeslots?.map((time) {
+  //         time.isSelected = false;
+  //         return time;
+  //       }).toList();
+  //       return timeSlot;
+  //     }).toList();
+  //     CinemaListForHiveVO cinemaList = CinemaListForHiveVO(timeSlotList);
+  //     timeSlotDao.saveAllCinemaDayTimeslot(date, cinemaList);
+  //     return Future.value(value);
+  //   });
+  // }
 
   @override
   Future<List> logout() {
@@ -102,10 +102,10 @@ class AuthModelImpl extends AuthModel {
     return Future.value(userDataDao.getUserToken());
   }
 
-  @override
-  Future<List<CinemaVO>?> getCinemaDayTimeSlotFromDataBase(String date) {
-    return Future.value(timeSlotDao.getAllCinemaDayTimeslot(date)?.cinemaList);
-  }
+  // @override
+  // Future<List<CinemaVO>?> getCinemaDayTimeSlotFromDataBase(String date) {
+  //   return Future.value(timeSlotDao.getAllCinemaDayTimeslot(date)?.cinemaList);
+  // }
 
   @override
   Future<List<SeatingPlanVO>?> getCinemaSeatingPlanFromDatabase() {
@@ -181,6 +181,22 @@ class AuthModelImpl extends AuthModel {
     });
   }
 
+  @override
+  void getCinemaDayTimeSlot(String date) {
+    String token = "Bearer " + userDataDao.getUserToken().toString();
+    _dataAgent.getCinemaDayTimeSlot(token, date).then((value) {
+      List<CinemaVO> timeSlotList = value!.map((timeSlot) {
+        timeSlot.timeslots?.map((time) {
+          time.isSelected = false;
+          return time;
+        }).toList();
+        return timeSlot;
+      }).toList();
+      CinemaListForHiveVO cinemaList = CinemaListForHiveVO(timeSlotList);
+      timeSlotDao.saveAllCinemaDayTimeslot(date, cinemaList);
+    });
+  }
+
   /// from database
   @override
   Stream<UserDataVO?> getUserDatafromDatabase() {
@@ -203,17 +219,31 @@ class AuthModelImpl extends AuthModel {
 
   @override
   Stream<List<PaymentVO>?> getPaymentMethodListFromDatabase() {
+    getPaymentMethodList();
     return paymentMethodDao
         .getPaymentMethodEventStream()
+        // ignore: void_checks
         .startWith(paymentMethodDao.getAllPaymentMethodStream())
         .map((event) => paymentMethodDao.getAllPaymentMethod());
   }
 
   @override
   Stream<List<UserCardVO>?> getUserCardsFromDatabase() {
+    getProfile();
     return userCardDao
         .getUserCardEventStream()
+        // ignore: void_checks
         .startWith(userCardDao.getAllUserCardsStream())
         .map((event) => userCardDao.getAllUserCards());
+  }
+
+  @override
+  Stream<List<CinemaVO>?> getCinemaDayTimeSlotFromDataBase(String date) {
+    getCinemaDayTimeSlot(date);
+    return timeSlotDao
+        .getCinemaEventStream()
+        // ignore: void_checks
+        .startWith(timeSlotDao.getAllCinemaDayTimeslotStream(date))
+        .map((event) => timeSlotDao.getAllCinemaDayTimeslot(date)?.cinemaList);
   }
 }
