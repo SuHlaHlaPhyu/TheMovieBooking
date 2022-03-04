@@ -28,7 +28,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
   @override
   void initState() {
-    /// from db
+    /// reactive movie details
     movieModel.getMovieDetailsFromDatabase(widget.movieId).listen((details) {
       setState(() {
         movieDetails = details;
@@ -37,7 +37,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       debugPrint(error.toString());
     });
 
-    /// Get Credits by movies from db
+    /// reactive credit by movie
     movieModel
         .getCreditByMovieFromDatabase(widget.movieId)
         .listen((castAndCrews) {

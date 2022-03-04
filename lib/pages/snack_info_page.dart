@@ -46,10 +46,9 @@ class _SnackInfoPageState extends State<SnackInfoPage> {
   List<SnackRequest>? snackRequest;
   @override
   void initState() {
-    // snack list
     grandTotal += widget.totalCost;
 
-    // snack list from db
+    // snack list
     authModel.getSnackListFromDatabase().listen((snack) {
       setState(() {
         snackList = snack!;
@@ -57,9 +56,6 @@ class _SnackInfoPageState extends State<SnackInfoPage> {
     }).onError((error) {
       debugPrint(error.toString());
     });
-
-    /// payment methods
-    authModel.getPaymentMethodList();
 
     /// payment methods
     authModel.getPaymentMethodListFromDatabase().listen((payment) {
@@ -96,24 +92,10 @@ class _SnackInfoPageState extends State<SnackInfoPage> {
             SnackInfoListView(
               snackList: snackList,
               onAdded: (index) {
-                // add quatity
-                setState(() {
-                  int q = snackList[index].quantity!;
-                  q++;
-                  snackList[index].quantity = q;
-                  grandTotal += snackList[index].price!;
-                });
+                addQuantity(index);
               },
               onRemoved: (index) {
-                // remove quantity
-                setState(() {
-                  int q = snackList[index].quantity!;
-                  if (q != 0) {
-                    q--;
-                    grandTotal -= snackList[index].price!;
-                    snackList[index].quantity = q;
-                  }
-                });
+                subtractQuantity(index);
               },
             ),
             const SizedBox(
@@ -128,14 +110,7 @@ class _SnackInfoPageState extends State<SnackInfoPage> {
             PaymentMethodView(
               paymentList: paymentList ?? [],
               selectedPayment: (selectIndex) {
-                setState(() {
-                  selectPayment = paymentList![selectIndex!].name!;
-                  paymentList
-                      ?.map((payment) => payment.isSelected = false)
-                      .toList();
-                  paymentList?[selectIndex].isSelected = true;
-                  //
-                });
+                selectedPaymentMethods(selectIndex);
               },
             ),
             const SizedBox(
@@ -150,39 +125,61 @@ class _SnackInfoPageState extends State<SnackInfoPage> {
         ),
         child: GestureDetector(
           onTap: () {
-            if (selectPayment != "") {
-              print("tapped");
-              // snackList.map((snack) {
-              //   if (snack.quantity != 0) {
-              //     print(
-              //         "snack id ${snack.id} snack quantity ${snack.quantity}");
-              //     snackRequest
-              //         ?.add(SnackRequest(snack.id ?? 1, snack.quantity ?? 1));
-              //   }
-              // });
-              snackRequest?.add(SnackRequest(1, 1));
-              // print(
-              //   "moviename ${widget.movieName!} \n date ${widget.date} \ntime ${widget.time!} \n cinemaName ${widget.cinemaName!} \n cinema ${widget.cinema} \n row ${widget.row} \n seat ${widget.seat} grandtotal $grandTotal \n timeslot ${widget.timeslot} \n snack $snackRequest",
-              // );
-              _navigateToPaymentInfoPage(
-                  context,
-                  widget.movieName!,
-                  widget.date,
-                  widget.time!,
-                  widget.cinemaName!,
-                  widget.cinema,
-                  widget.row,
-                  widget.seat,
-                  grandTotal,
-                  widget.timeslot,
-                  snackRequest ?? [SnackRequest(1, 2)]);
-            }
+            goToNextPage(context);
           },
-          child: AppTextButton("Pay \$ $grandTotal",
-              btnColor: selectPayment == "" ? Colors.grey : PRIMARY_COLOR),
+          child: AppTextButton(
+            "Pay \$ $grandTotal",
+            btnColor: selectPayment == "" ? Colors.grey : PRIMARY_COLOR,
+          ),
         ),
       ),
     );
+  }
+
+  void goToNextPage(BuildContext context) {
+    if (selectPayment != "") {
+      snackRequest?.add(SnackRequest(1, 1));
+      _navigateToPaymentInfoPage(
+          context,
+          widget.movieName!,
+          widget.date,
+          widget.time!,
+          widget.cinemaName!,
+          widget.cinema,
+          widget.row,
+          widget.seat,
+          grandTotal,
+          widget.timeslot,
+          snackRequest ?? [SnackRequest(1, 2)]);
+    }
+  }
+
+  void selectedPaymentMethods(int? selectIndex) {
+    setState(() {
+      selectPayment = paymentList![selectIndex!].name!;
+      paymentList?.map((payment) => payment.isSelected = false).toList();
+      paymentList?[selectIndex].isSelected = true;
+    });
+  }
+
+  void subtractQuantity(int index) {
+    setState(() {
+      int q = snackList[index].quantity!;
+      if (q != 0) {
+        q--;
+        grandTotal -= snackList[index].price!;
+        snackList[index].quantity = q;
+      }
+    });
+  }
+
+  void addQuantity(int index) {
+    setState(() {
+      int q = snackList[index].quantity!;
+      q++;
+      snackList[index].quantity = q;
+      grandTotal += snackList[index].price!;
+    });
   }
 }
 
@@ -258,18 +255,6 @@ class PaymentMethodView extends StatelessWidget {
     );
   }
 }
-// const ListTile(
-//   horizontalTitleGap: 4.0,
-//   leading: Icon(
-//     Icons.credit_card,
-//   ),
-//   title: Text(
-//     'Credit card',
-//   ),
-//   subtitle: SubtitleText(
-//     'Visa, master card, JCB',
-//   ),
-// ),
 
 class PromoTextFormView extends StatelessWidget {
   double totalCost;

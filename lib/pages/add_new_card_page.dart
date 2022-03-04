@@ -107,18 +107,7 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
         ),
         child: InkWell(
           onTap: () {
-            if (formKey.currentState!.validate()) {
-              int cardNum = int.parse(_cardNumController.text.toString());
-              String cardHolder = _cardHolderController.text.toString();
-              String expDate = _expDateController.text.toString();
-              int cardType = int.parse(_cardTypeController.text.toString());
-              authModel
-                  .createCard(cardNum, cardHolder, expDate, cardType)
-                  .then((value) {
-                authModel.getProfile();
-                Navigator.pop(context);
-              });
-            }
+            addNewCard(context);
           },
           child: AppTextButton(
             "Confrim",
@@ -126,6 +115,21 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
         ),
       ),
     );
+  }
+
+  void addNewCard(BuildContext context) {
+    if (formKey.currentState!.validate()) {
+      int cardNum = int.parse(_cardNumController.text.toString());
+      String cardHolder = _cardHolderController.text.toString();
+      String expDate = _expDateController.text.toString();
+      int cardType = int.parse(_cardTypeController.text.toString());
+      authModel
+          .createCard(cardNum, cardHolder, expDate, cardType)
+          .then((value) {
+        authModel.getProfile();
+        Navigator.pop(context);
+      });
+    }
   }
 }
 

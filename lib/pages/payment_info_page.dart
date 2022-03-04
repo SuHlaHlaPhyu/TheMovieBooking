@@ -54,7 +54,6 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
   @override
   void initState() {
     /// user card list
-    //authModel.getProfile();
     authModel.getUserCardsFromDatabase().listen((card) {
       setState(() {
         cardList = card;
@@ -128,23 +127,7 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
         ),
         child: GestureDetector(
           onTap: () {
-            //
-            CheckOutRequest checkOutRequest = CheckOutRequest(
-                widget.timeslot,
-                widget.seat,
-                widget.date,
-                widget.movie.id ?? 568124,
-                cardId,
-                widget.snackrequest,
-                widget.cinema.cinemaId ?? 1,
-                widget.row,
-                widget.totalCost ?? 0.0);
-            authModel.checkout(checkOutRequest).then((value) {
-              setState(() {
-                checkoutVO = value!;
-              });
-              _navigateToTicketInfoPage(context, checkoutVO, widget.movie);
-            });
+            goToNextPage(context);
           },
           child: AppTextButton(
             "Confrim",
@@ -152,6 +135,25 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
         ),
       ),
     );
+  }
+
+  void goToNextPage(BuildContext context) {
+     CheckOutRequest checkOutRequest = CheckOutRequest(
+        widget.timeslot,
+        widget.seat,
+        widget.date,
+        widget.movie.id ?? 568124,
+        cardId,
+        widget.snackrequest,
+        widget.cinema.cinemaId ?? 1,
+        widget.row,
+        widget.totalCost ?? 0.0);
+    authModel.checkout(checkOutRequest).then((value) {
+      setState(() {
+        checkoutVO = value!;
+      });
+      _navigateToTicketInfoPage(context, checkoutVO, widget.movie);
+    });
   }
 }
 

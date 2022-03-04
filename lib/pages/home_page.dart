@@ -39,13 +39,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    /// get now playing movie
     authModel.getUserTokenfromDatabase().then((value) {
       token = value;
       if (token != null || token == "") {
         authModel.getUserDatafromDatabase().listen((user) {
           userData = user;
-          print(" user data ========> ${userData?.userToken}");
         }).onError((error) {
           debugPrint(error.toString());
         });
@@ -53,10 +51,12 @@ class _HomePageState extends State<HomePage> {
       print("token ====> $token");
     }).catchError((error) {
       debugPrint("error from db" + error.toString());
-    });
+    });     
+
+    /// snack list
     authModel.getSnackList();
 
-    /// get now playing movie from db
+    /// get now playing movie
     movieModel.getNowPlayingMoviesFromDatabase(1).listen((movieList) {
       setState(() {
         nowShowingMovies = movieList;
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
       debugPrint(error.toString());
     });
 
-    /// get coming soon movie from db
+    /// get coming soon movie
     movieModel.getComingSoonMoviesFromDatabase(1).listen((movieList) {
       setState(() {
         comingSoonMovies = movieList;

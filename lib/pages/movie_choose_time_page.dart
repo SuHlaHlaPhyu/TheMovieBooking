@@ -28,35 +28,13 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
   int? timeslotId;
   @override
   void initState() {
-    // time slots
-    // authModel.getCinemaDayTimeSlot(selectedDate).then((cinema) {
-    //   setState(() {
-    //     cinemaList = cinema ?? [];
-    //     print("time slot from network $cinemaList");
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
-
     authModel.getCinemaDayTimeSlotFromDataBase(selectedDate).listen((cinema) {
       setState(() {
         cinemaList = cinema ?? [];
-        print("time slot from db $cinemaList");
       });
     }).onError((error) {
       debugPrint(error.toString());
     });
-
-    /// from db
-    // authModel.getCinemaDayTimeSlotFromDataBase(selectedDate).then((cinema) {
-    //   setState(() {
-    //     cinemaList = cinema ?? [];
-    //     print("time slot from db $cinemaList");
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
-
     super.initState();
   }
 
@@ -84,51 +62,13 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
                 onSelected: (selectDate) {
                   selectedDate = selectDate!;
                   selectedMovieTime = "";
-
-                  // authModel.getCinemaDayTimeSlot(selectDate).then((cinema) {
-                  //   setState(() {
-                  //     cinemaList = cinema;
-                  //   });
-                  // }).catchError((error) {
-                  //   debugPrint(error.toString());
-                  // });
-
-                  /// from db
-                  authModel
-                      .getCinemaDayTimeSlotFromDataBase(selectedDate)
-                      .listen((cinema) {
-                    setState(() {
-                      cinemaList = cinema;
-                    });
-                  }).onError((error) {
-                    debugPrint(error.toString());
-                  });
+                  chooseMovieDate();
                 },
               ),
               ChooseItemGridSectionView(
                 cinemaList: cinemaList ?? [],
                 onSelected: (cinemaIndex, selectedTime) {
-                  timeslotId = cinemaList?[cinemaIndex!]
-                      .timeslots?[selectedTime!]
-                      .cinemaDayTimeslotId;
-                  cinema = cinemaList![cinemaIndex!];
-                  selectedCinema = cinemaList?[cinemaIndex].cinema;
-                  selectedMovieTime = cinemaList?[cinemaIndex]
-                      .timeslots?[selectedTime!]
-                      .startTime;
-                  setState(() {
-                    // set False to all
-                    cinemaList?.map((cinema) {
-                      cinema.timeslots?.map((time) {
-                        time.isSelected = false;
-                      }).toList();
-                    }).toList();
-
-                    // set True to selected Time
-                    cinemaList?[cinemaIndex]
-                        .timeslots?[selectedTime!]
-                        .isSelected = true;
-                  });
+                  chooseItemGrid(cinemaIndex, selectedTime);
                 },
               ),
               const SizedBox(
@@ -144,11 +84,7 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
         ),
         child: GestureDetector(
           onTap: () {
-            if (selectedMovieTime == null || selectedMovieTime == "") {
-            } else {
-              _navigateToSeatPlanPage(context, widget.movie, selectedDate,
-                  selectedMovieTime!, selectedCinema!, cinema!, timeslotId!);
-            }
+            goToNextPage(context);
           },
           child: AppTextButton(
             "Next",
@@ -159,6 +95,44 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
         ),
       ),
     );
+  }
+
+  void goToNextPage(BuildContext context) {
+    if (selectedMovieTime == null || selectedMovieTime == "") {
+    } else {
+      _navigateToSeatPlanPage(context, widget.movie, selectedDate,
+          selectedMovieTime!, selectedCinema!, cinema!, timeslotId!);
+    }
+  }
+
+  void chooseMovieDate() {
+    authModel.getCinemaDayTimeSlotFromDataBase(selectedDate).listen((cinema) {
+      setState(() {
+        cinemaList = cinema;
+      });
+    }).onError((error) {
+      debugPrint(error.toString());
+    });
+  }
+
+  void chooseItemGrid(int? cinemaIndex, int? selectedTime) {
+    timeslotId =
+        cinemaList?[cinemaIndex!].timeslots?[selectedTime!].cinemaDayTimeslotId;
+    cinema = cinemaList![cinemaIndex!];
+    selectedCinema = cinemaList?[cinemaIndex].cinema;
+    selectedMovieTime =
+        cinemaList?[cinemaIndex].timeslots?[selectedTime!].startTime;
+    setState(() {
+      // set False to all
+      cinemaList?.map((cinema) {
+        cinema.timeslots?.map((time) {
+          time.isSelected = false;
+        }).toList();
+      }).toList();
+
+      // set True to selected Time
+      cinemaList?[cinemaIndex].timeslots?[selectedTime!].isSelected = true;
+    });
   }
 }
 
@@ -184,19 +158,6 @@ class ChooseItemGridSectionView extends StatelessWidget {
   Function(int?, int?) onSelected;
   ChooseItemGridSectionView(
       {required this.cinemaList, required this.onSelected});
-  // List<String> seatList = [
-  //   '2D',
-  //   '3D',
-  // ];
-
-  // List<String> timeList = [
-  //   '9:30 AM',
-  //   '11:45 AM',
-  //   '3:30 PM',
-  //   '5:00 PM',
-  //   '7:00 PM',
-  //   '9:30 PM',
-  // ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -229,16 +190,6 @@ class ChooseItemGridSectionView extends StatelessWidget {
     );
   }
 }
-
-// map(
-//               (cinema) => ChooseItemGridView(
-//                 text: cinema.cinema,
-//                 timeSlot: cinema.timeslots,
-//                 onSelected: (selectedTime) =>
-//                     onSelected(cinema.cinemaId, selectedTime),
-//               ),
-//             )
-//             .toList(),
 
 class ChooseItemGridView extends StatelessWidget {
   final String? text;
@@ -315,49 +266,6 @@ class ChooseItemGridView extends StatelessWidget {
   }
 }
 
-// class MovieChooseDateView extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: MOVIE_CHOOSE_DATE_HIGHT,
-//       color: PRIMARY_COLOR,
-//       child: ListView.separated(
-//           separatorBuilder: (context, index) {
-//             return const SizedBox(
-//               width: MARGIN_MEDIUM_2,
-//             );
-//           },
-//           padding: const EdgeInsets.symmetric(
-//             horizontal: MARGIN_MEDIUM_2,
-//           ),
-//           scrollDirection: Axis.horizontal,
-//           itemCount: 20,
-//           itemBuilder: (context, index) {
-//             return Column(
-//               children: const [
-//                 Text(
-//                   'Wed',
-//                   style: TextStyle(
-//                     color: Colors.white,
-//                     fontSize: TEXT_REGULAR_3X,
-//                   ),
-//                 ),
-//                 SizedBox(
-//                   height: MARGIN_MEDIUM_2,
-//                 ),
-//                 Text(
-//                   '10',
-//                   style: TextStyle(
-//                     color: Colors.white,
-//                     fontSize: TEXT_REGULAR_3X,
-//                   ),
-//                 )
-//               ],
-//             );
-//           }),
-//     );
-//   }
-// }
 class MovieChooseDateView extends StatelessWidget {
   Function(String?) onSelected;
   MovieChooseDateView({required this.onSelected});

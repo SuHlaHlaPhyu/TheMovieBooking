@@ -52,15 +52,6 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
     }).catchError((error) {
       debugPrint(error.toString());
     });
-
-    //
-    // authModel.getCinemaSeatingPlanFromDatabase().then((value) {
-    //   setState(() {
-    //     seatPlan = value!;
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
     super.initState();
   }
 
@@ -100,29 +91,7 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
               MovieSeatSectionView(
                 movieSeats: seatPlan,
                 onSelected: (index) {
-                  if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
-                    String name = seatPlan[index].seatName!;
-                    row = seatPlan[index].symbol;
-
-                    if (seatPlan[index].isSelected == true) {
-                      setState(() {
-                        seatPlan[index].isSelected = false;
-                        totalPrice -= seatPlan[index].price!;
-                        totalTickets -= 1;
-                      });
-                    } else {
-                      setState(() {
-                        seatPlan[index].isSelected = true;
-                        totalPrice += seatPlan[index].price!;
-                        totalTickets += 1;
-                      });
-                    }
-                    if (seatName.contains(name)) {
-                      seatName.remove(name);
-                    } else {
-                      seatName.add(name);
-                    }
-                  }
+                  selectedMovieSeatSection(index);
                 },
               ),
               const SizedBox(
@@ -150,20 +119,7 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
         ),
         child: GestureDetector(
           onTap: () {
-            //
-            if (seatName.isNotEmpty) {
-              _navigateToSnackInfoPage(
-                  context,
-                  widget.movieName!,
-                  widget.date,
-                  widget.time!,
-                  widget.cinemaName!,
-                  widget.cinema,
-                  totalPrice,
-                  row!,
-                  seatName.join(","),
-                  widget.timelsot);
-            }
+            goToNextPage(context);
           },
           child: AppTextButton(
             "Buy Ticket for \$ $totalPrice",
@@ -172,6 +128,48 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
         ),
       ),
     );
+  }
+
+  void goToNextPage(BuildContext context) {
+    if (seatName.isNotEmpty) {
+      _navigateToSnackInfoPage(
+          context,
+          widget.movieName!,
+          widget.date,
+          widget.time!,
+          widget.cinemaName!,
+          widget.cinema,
+          totalPrice,
+          row!,
+          seatName.join(","),
+          widget.timelsot);
+    }
+  }
+
+  void selectedMovieSeatSection(int? index) {
+    if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
+      String name = seatPlan[index].seatName!;
+      row = seatPlan[index].symbol;
+
+      if (seatPlan[index].isSelected == true) {
+        setState(() {
+          seatPlan[index].isSelected = false;
+          totalPrice -= seatPlan[index].price!;
+          totalTickets -= 1;
+        });
+      } else {
+        setState(() {
+          seatPlan[index].isSelected = true;
+          totalPrice += seatPlan[index].price!;
+          totalTickets += 1;
+        });
+      }
+      if (seatName.contains(name)) {
+        seatName.remove(name);
+      } else {
+        seatName.add(name);
+      }
+    }
   }
 }
 

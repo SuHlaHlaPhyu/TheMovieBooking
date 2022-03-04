@@ -139,47 +139,13 @@ class _AuthenticationPageState extends State<AuthenticationPage>
                       _passwordFocus,
                       false,
                       onTap: () {
-                        if (loginFormKey.currentState!.validate()) {
-                          authModel.loginWithEmail(
-                              _phoneController.text.toString(),
-                              _emailController.text.toString());
-                          _navigateToHomeScreen(
-                            context,
-                          );
-                        }
+                        emailLogin(context);
                       },
                       onTapGoogle: () {
-                        GoogleSignIn _googleSignIn = GoogleSignIn(
-                          scopes: [
-                            'email',
-                            'https://www.googleapis.com/auth/contacts.readonly',
-                          ],
-                        );
-                        _googleSignIn.signIn().then((googleAccount) {
-                          googleAccount?.authentication.then((authentication) {
-                            authModel.loginWithGoogle(
-                                authentication.accessToken ?? "");
-                            _navigateToHomeScreen(
-                              context,
-                            );
-                            print(
-                                "authentication accessToken ${authentication.accessToken}");
-                          });
-                        });
+                        googleLogin(context);
                       },
                       onTapFacebook: () {
-                        FacebookAuth.instance.login(permissions: [
-                          "public_profile",
-                          "email"
-                        ]).then((value) {
-                          print(
-                              "accessToken =======> ${value.accessToken?.token}");
-                          authModel.loginWithFacebook(
-                              value.accessToken?.userId ?? "");
-                          _navigateToHomeScreen(
-                            context,
-                          );
-                        });
+                        facebookLogin(context);
                       },
                     ),
                     AuthFormView(
@@ -194,71 +160,13 @@ class _AuthenticationPageState extends State<AuthenticationPage>
                       _passwordFocus,
                       true,
                       onTap: () {
-                        if (signupFormKey.currentState!.validate()) {
-                          print(
-                              "info ====> \n name : ${_nameController.text} \n email : ${_phoneController.text} \n password : ${_emailController.text} \n phone : ${_passwordController.text} \n");
-                          authModel.registerWithEmail(
-                              _nameController.text.toString(),
-                              _phoneController.text.toString(),
-                              _passwordController.text.toString(),
-                              _emailController.text.toString(),
-                              googleToken,
-                              facebookToken);
-                          _navigateToHomeScreen(
-                            context,
-                          );
-                        }
+                        accountRegister(context);
                       },
                       onTapGoogle: () {
-                        // google register
-                        GoogleSignIn _googleSignIn = GoogleSignIn(
-                          scopes: [
-                            'email',
-                            'https://www.googleapis.com/auth/contacts.readonly',
-                          ],
-                        );
-                        _googleSignIn.signIn().then((googleAccount) {
-                          googleAccount?.authentication.then((authentication) {
-                            setState(() {
-                              _nameController = TextEditingController(
-                                text: googleAccount.displayName,
-                              );
-                              _phoneController = TextEditingController(
-                                text: googleAccount.email,
-                              );
-                              googleToken = authentication.accessToken ?? "";
-                              //  googleToken = googleAccount.id;
-                            });
-                            print(
-                                "authentication id Token =======> ${googleAccount.id}");
-                            print(
-                                "authentication access Token =======> ${authentication.accessToken}");
-                          });
-                        });
+                        googleSignIn();
                       },
                       onTapFacebook: () async {
-                        FacebookAuth.instance.login(permissions: [
-                          "public_profile",
-                          "email"
-                        ]).then((value) {
-                          FacebookAuth.instance.getUserData().then((userData) {
-                            setState(() {
-                              _userObj = userData;
-                              _nameController =
-                                  TextEditingController(text: _userObj["name"]);
-                              _phoneController = TextEditingController(
-                                  text: _userObj["email"]);
-                              // facebookToken = value.accessToken?.token ?? "";
-                              facebookToken = value.accessToken?.userId ?? "";
-                            });
-                            print(
-                                "facebook user obj =======> ${_userObj["name"]} ${_userObj["email"]}");
-                            print(
-                                "facebook user id =======> ${value.accessToken?.userId}");
-                            print(
-                                "facebook access token =======> ${value.accessToken?.token}");
-                          });
-                        });
+                        facebookSignIn();
                       },
                     ),
                   ],
@@ -269,6 +177,107 @@ class _AuthenticationPageState extends State<AuthenticationPage>
         ),
       ),
     );
+  }
+
+  void facebookSignIn() {
+    FacebookAuth.instance
+        .login(permissions: ["public_profile", "email"]).then((value) {
+      FacebookAuth.instance.getUserData().then((userData) {
+        setState(() {
+          _userObj = userData;
+          _nameController = TextEditingController(text: _userObj["name"]);
+          _phoneController = TextEditingController(text: _userObj["email"]);
+          // facebookToken = value.accessToken?.token ?? "";
+          facebookToken = value.accessToken?.userId ?? "";
+        });
+        print(
+            "facebook user obj =======> ${_userObj["name"]} ${_userObj["email"]}");
+        print("facebook user id =======> ${value.accessToken?.userId}");
+        print("facebook access token =======> ${value.accessToken?.token}");
+      });
+    });
+  }
+
+  void googleSignIn() {
+    GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+    _googleSignIn.signIn().then((googleAccount) {
+      googleAccount?.authentication.then((authentication) {
+        setState(() {
+          _nameController = TextEditingController(
+            text: googleAccount.displayName,
+          );
+          _phoneController = TextEditingController(
+            text: googleAccount.email,
+          );
+          googleToken = authentication.accessToken ?? "";
+          //  googleToken = googleAccount.id;
+        });
+        print("authentication id Token =======> ${googleAccount.id}");
+        print(
+            "authentication access Token =======> ${authentication.accessToken}");
+      });
+    });
+  }
+
+  void accountRegister(BuildContext context) {
+    if (signupFormKey.currentState!.validate()) {
+      print(
+          "info ====> \n name : ${_nameController.text} \n email : ${_phoneController.text} \n password : ${_emailController.text} \n phone : ${_passwordController.text} \n");
+      authModel.registerWithEmail(
+          _nameController.text.toString(),
+          _phoneController.text.toString(),
+          _passwordController.text.toString(),
+          _emailController.text.toString(),
+          googleToken,
+          facebookToken);
+      _navigateToHomeScreen(
+        context,
+      );
+    }
+  }
+
+  void facebookLogin(BuildContext context) {
+    FacebookAuth.instance
+        .login(permissions: ["public_profile", "email"]).then((value) {
+      print("accessToken =======> ${value.accessToken?.token}");
+      authModel.loginWithFacebook(value.accessToken?.userId ?? "");
+      _navigateToHomeScreen(
+        context,
+      );
+    });
+  }
+
+  void googleLogin(BuildContext context) {
+    GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+    _googleSignIn.signIn().then((googleAccount) {
+      googleAccount?.authentication.then((authentication) {
+        authModel.loginWithGoogle(authentication.accessToken ?? "");
+        _navigateToHomeScreen(
+          context,
+        );
+        print("authentication accessToken ${authentication.accessToken}");
+      });
+    });
+  }
+
+  void emailLogin(BuildContext context) {
+    if (loginFormKey.currentState!.validate()) {
+      authModel.loginWithEmail(
+          _phoneController.text.toString(), _emailController.text.toString());
+      _navigateToHomeScreen(
+        context,
+      );
+    }
   }
 }
 

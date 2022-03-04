@@ -28,7 +28,6 @@ class _TicketInfoPageState extends State<TicketInfoPage> {
         backgroundColor: Colors.white,
         leading: GestureDetector(
           onTap: () {
-            // Navigator.pop(context);
             _navigateToHomeScreen(context);
           },
           child: const Icon(
