@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:movie_booking/data/models/movie/movie_model.dart';
-import 'package:movie_booking/data/models/movie/movie_model_impl.dart';
+import 'package:movie_booking/blocs/movie_detail_bloc.dart';
 import 'package:movie_booking/data/vos/actor_vo.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/network/api_constants.dart';
@@ -10,140 +9,123 @@ import 'package:movie_booking/resources/dimension.dart';
 import 'package:movie_booking/resources/string.dart';
 import 'package:movie_booking/widgets/app_text_button.dart';
 import 'package:movie_booking/widgets/title_text.dart';
+import 'package:provider/provider.dart';
 
-import 'snack_info_page.dart';
-
-class MovieDetailPage extends StatefulWidget {
+class MovieDetailPage extends StatelessWidget {
   final int movieId;
   MovieDetailPage({required this.movieId});
 
   @override
-  _MovieDetailPageState createState() => _MovieDetailPageState();
-}
-
-class _MovieDetailPageState extends State<MovieDetailPage> {
-  MovieModel movieModel = MovieModelImpl();
-  List<ActorVO>? casts;
-  MovieVO? movieDetails;
-
-  @override
-  void initState() {
-    /// reactive movie details
-    movieModel.getMovieDetailsFromDatabase(widget.movieId).listen((details) {
-      setState(() {
-        movieDetails = details;
-      });
-    }).onError((error) {
-      debugPrint(error.toString());
-    });
-
-    /// reactive credit by movie
-    movieModel
-        .getCreditByMovieFromDatabase(widget.movieId)
-        .listen((castAndCrews) {
-      setState(() {
-        casts = castAndCrews;
-      });
-    }).onError((error) {
-      debugPrint(error.toString());
-    });
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(
-              20,
-            ),
-            topLeft: Radius.circular(
-              20,
-            ),
-          ),
-        ),
-        child: Stack(
-          children: [
-            CustomScrollView(
-              slivers: [
-                MovieDetailAppbarView(
-                  () {
-                    Navigator.pop(context);
-                  },
-                  imageUrl: movieDetails?.posterPath ?? "",
+    return ChangeNotifierProvider(
+      create: (context) => MovieDetailBloc(movieId),
+      child: Scaffold(
+        body: Selector<MovieDetailBloc, MovieVO?>(
+            selector: (BuildContext context, bloc) => bloc.movieDetails,
+            builder: (BuildContext context, movieDetails, Widget? child) {
+              return Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(
+                      20,
+                    ),
+                    topLeft: Radius.circular(
+                      20,
+                    ),
+                  ),
                 ),
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: MARGIN_MEDIUM_2,
+                child: Stack(
+                  children: [
+                    CustomScrollView(
+                      slivers: [
+                        MovieDetailAppbarView(
+                          () {
+                            Navigator.pop(context);
+                          },
+                          imageUrl: movieDetails?.posterPath ?? "",
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          //mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const SizedBox(
-                              height: MARGIN_MEDIUM_3,
-                            ),
-                            TitleText(movieDetails?.title ?? ""),
-                            const SizedBox(
-                              height: MARGIN_MEDIUM_3,
-                            ),
-                            DetailRatingView(
-                              releaseDate: movieDetails?.releaseDate ?? "",
-                              popularity: movieDetails?.popularity ?? 0.0,
-                            ),
-                            const SizedBox(
-                              height: MARGIN_MEDIUM_3,
-                            ),
-                            GenreView(
-                              genreList:
-                                  movieDetails?.getGenreListAsStringList() ??
-                                      [],
-                            ),
-                            const SizedBox(
-                              height: MARGIN_MEDIUM_3,
-                            ),
-                            PlotSummaryView(movieDetails?.overview ?? ""),
-                            const SizedBox(
-                              height: MARGIN_MEDIUM_3,
-                            ),
-                            CastView(
-                              castList: casts,
-                            ),
-                            const SizedBox(
-                              height: MARGIN_XXLARGE,
-                            ),
-                          ],
+                        SliverList(
+                          delegate: SliverChildListDelegate(
+                            [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: MARGIN_MEDIUM_2,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  //mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const SizedBox(
+                                      height: MARGIN_MEDIUM_3,
+                                    ),
+                                    TitleText(movieDetails?.title ?? ""),
+                                    const SizedBox(
+                                      height: MARGIN_MEDIUM_3,
+                                    ),
+                                    DetailRatingView(
+                                      releaseDate:
+                                          movieDetails?.releaseDate ?? "",
+                                      popularity:
+                                          movieDetails?.popularity ?? 0.0,
+                                    ),
+                                    const SizedBox(
+                                      height: MARGIN_MEDIUM_3,
+                                    ),
+                                    GenreView(
+                                      genreList: movieDetails
+                                              ?.getGenreListAsStringList() ??
+                                          [],
+                                    ),
+                                    const SizedBox(
+                                      height: MARGIN_MEDIUM_3,
+                                    ),
+                                    PlotSummaryView(
+                                        movieDetails?.overview ?? ""),
+                                    const SizedBox(
+                                      height: MARGIN_MEDIUM_3,
+                                    ),
+                                    Selector<MovieDetailBloc, List<ActorVO>?>(
+                                        selector:
+                                            (BuildContext context, bloc) =>
+                                                bloc.casts,
+                                        builder: (BuildContext context, casts,
+                                            Widget? child) {
+                                          return CastView(
+                                            castList: casts,
+                                          );
+                                        }),
+                                    const SizedBox(
+                                      height: MARGIN_XXLARGE,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: MARGIN_MEDIUM_4,
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            _navigateToChooseTimePage(context, movieDetails);
+                          },
+                          child: AppTextButton(
+                            TICKETS_BUTTON_TEXT,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-              ],
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: MARGIN_MEDIUM_4,
-                ),
-                child: GestureDetector(
-                  onTap: () {
-                    _navigateToChooseTimePage(context, movieDetails);
-                  },
-                  child: AppTextButton(
-                    TICKETS_BUTTON_TEXT,
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
+              );
+            }),
       ),
     );
   }

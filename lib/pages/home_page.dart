@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:movie_booking/blocs/home_bloc.dart';
 import 'package:movie_booking/data/models/auth/auth_model.dart';
 import 'package:movie_booking/data/models/auth/auth_model_impl.dart';
-import 'package:movie_booking/data/models/movie/movie_model.dart';
-import 'package:movie_booking/data/models/movie/movie_model_impl.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
 import 'package:movie_booking/listItems/menu_item.dart';
@@ -14,6 +13,7 @@ import 'package:movie_booking/resources/dimension.dart';
 import 'package:movie_booking/resources/string.dart';
 import 'package:movie_booking/widgets/sub_text.dart';
 import 'package:movie_booking/widgets/title_text.dart';
+import 'package:provider/provider.dart';
 
 import '../data/vos/snack_vo.dart';
 import 'movie_detail_page.dart';
@@ -26,10 +26,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  MovieModel movieModel = MovieModelImpl();
   AuthModel authModel = AuthModelImpl();
-  List<MovieVO>? nowShowingMovies;
-  List<MovieVO>? comingSoonMovies;
   List<SnackVO> snackList = [];
 
   UserDataVO? userData;
@@ -51,28 +48,10 @@ class _HomePageState extends State<HomePage> {
       print("token ====> $token");
     }).catchError((error) {
       debugPrint("error from db" + error.toString());
-    });     
+    });
 
     /// snack list
     authModel.getSnackList();
-
-    /// get now playing movie
-    movieModel.getNowPlayingMoviesFromDatabase(1).listen((movieList) {
-      setState(() {
-        nowShowingMovies = movieList;
-      });
-    }).onError((error) {
-      debugPrint(error.toString());
-    });
-
-    /// get coming soon movie
-    movieModel.getComingSoonMoviesFromDatabase(1).listen((movieList) {
-      setState(() {
-        comingSoonMovies = movieList;
-      });
-    }).onError((error) {
-      debugPrint(error.toString());
-    });
     super.initState();
   }
 
@@ -100,69 +79,85 @@ class _HomePageState extends State<HomePage> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      drawer: DrawerView(
-        menuItem: menuItem,
-        userDataVO: userData,
-        onTap: () {
-          // await googleSignIn.disconnect();
-          showLogoutConfirm();
-        },
-      ),
-      appBar: AppBar(
+    return ChangeNotifierProvider(
+      create: (context) => HomeBloc(),
+      child: Scaffold(
         backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
+        drawer: DrawerView(
+          menuItem: menuItem,
+          userDataVO: userData,
+          onTap: () {
+            showLogoutConfirm();
+          },
         ),
-        elevation: 0.0,
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(
-              right: MARGIN_MEDIUM_2,
-            ),
-            child: Icon(
-              Icons.search,
-              color: Colors.black,
-              size: MARGIN_XLARGE,
-            ),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          iconTheme: const IconThemeData(
+            color: Colors.black,
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: MARGIN_MEDIUM,
+          elevation: 0.0,
+          actions: const [
+            Padding(
+              padding: EdgeInsets.only(
+                right: MARGIN_MEDIUM_2,
+              ),
+              child: Icon(
+                Icons.search,
+                color: Colors.black,
+                size: MARGIN_XLARGE,
+              ),
+            ),
+          ],
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ProfileView(
-                name: userData?.name ?? "",
-              ),
-              const SizedBox(
-                height: MARGIN_MEDIUM_3,
-              ),
-              NowShowingSectionView(
-                NOW_SHOWING_MOVIE_LIST_TEXT,
-                movieList: nowShowingMovies,
-                onTapMovie: (movieId) => _navigateToMovieDetailsScreen(
-                  context,
-                  movieId,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: MARGIN_MEDIUM,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ProfileView(
+                  name: userData?.name ?? "",
                 ),
-              ),
-              const SizedBox(
-                height: MARGIN_XLARGE,
-              ),
-              ComingSoonSectionView(
-                COMING_SOON_MOVIE_LIST_TEXT,
-                movieList: comingSoonMovies,
-                onTapMovie: (movieId) => _navigateToMovieDetailsScreen(
-                  context,
-                  movieId,
+                const SizedBox(
+                  height: MARGIN_MEDIUM_3,
                 ),
-              ),
-            ],
+                Selector<HomeBloc, List<MovieVO>?>(
+                  selector: (BuildContext context, bloc) =>
+                      bloc.nowShowingMovies,
+                  builder:
+                      (BuildContext context, nowShowingMovies, Widget? child) {
+                    return NowShowingSectionView(
+                      NOW_SHOWING_MOVIE_LIST_TEXT,
+                      movieList: nowShowingMovies,
+                      onTapMovie: (movieId) => _navigateToMovieDetailsScreen(
+                        context,
+                        movieId,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: MARGIN_XLARGE,
+                ),
+                Selector<HomeBloc, List<MovieVO>?>(
+                  selector: (BuildContext context, bloc) =>
+                      bloc.comingSoonMovies,
+                  builder:
+                      (BuildContext context, comingSoonMovies, Widget? child) {
+                    return ComingSoonSectionView(
+                      COMING_SOON_MOVIE_LIST_TEXT,
+                      movieList: comingSoonMovies,
+                      onTapMovie: (movieId) => _navigateToMovieDetailsScreen(
+                        context,
+                        movieId,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
