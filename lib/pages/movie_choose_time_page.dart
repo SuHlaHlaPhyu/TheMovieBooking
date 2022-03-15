@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/flutter_calendar_week.dart';
-import 'package:movie_booking/data/models/auth/auth_model.dart';
-import 'package:movie_booking/data/models/auth/auth_model_impl.dart';
+import 'package:movie_booking/blocs/movie_choose_time_bloc.dart';
 import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/data/vos/timeslot_vo.dart';
@@ -10,129 +9,98 @@ import 'package:movie_booking/resources/color.dart';
 import 'package:movie_booking/resources/dimension.dart';
 import 'package:movie_booking/widgets/app_text_button.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-class MovieChooseTimePage extends StatefulWidget {
+class MovieChooseTimePage extends StatelessWidget {
   MovieVO? movie;
   MovieChooseTimePage({Key? key, required this.movie}) : super(key: key);
 
   @override
-  _MovieChooseTimePageState createState() => _MovieChooseTimePageState();
-}
-
-class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
-  AuthModel authModel = AuthModelImpl();
-  List<CinemaVO>? cinemaList;
-  String selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-  String? selectedCinema, selectedMovieTime;
-  CinemaVO? cinema;
-  int? timeslotId;
-  @override
-  void initState() {
-    authModel.getCinemaDayTimeSlotFromDataBase(selectedDate).listen((cinema) {
-      setState(() {
-        cinemaList = cinema ?? [];
-      });
-    }).onError((error) {
-      debugPrint(error.toString());
-    });
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: PRIMARY_COLOR,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
-          ),
-        ),
-      ),
-      body: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              MovieChooseDateView(
-                onSelected: (selectDate) {
-                  selectedDate = selectDate!;
-                  selectedMovieTime = "";
-                  chooseMovieDate();
-                },
+    return ChangeNotifierProvider(
+      create: (context) => MovieChooseTimeBloc(),
+      child: Selector<MovieChooseTimeBloc, List<CinemaVO>?>(
+          selector: (BuildContext context, bloc) => bloc.cinemaList,
+          builder: (BuildContext context, cinemaList, Widget? child) {
+            MovieChooseTimeBloc bloc =
+                Provider.of<MovieChooseTimeBloc>(context, listen: false);
+            return Scaffold(
+              appBar: AppBar(
+                elevation: 0.0,
+                backgroundColor: PRIMARY_COLOR,
+                leading: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-              ChooseItemGridSectionView(
-                cinemaList: cinemaList ?? [],
-                onSelected: (cinemaIndex, selectedTime) {
-                  chooseItemGrid(cinemaIndex, selectedTime);
-                },
+              body: Container(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      MovieChooseDateView(
+                        onSelected: (selectDate) {
+                          bloc.selectedMovieTime = "";
+                          bloc.getTimeSlotbyDate(selectDate);
+                        },
+                      ),
+                      Selector<MovieChooseTimeBloc, List<CinemaVO>?>(
+                          selector: (BuildContext context, bloc) =>
+                              bloc.cinemaList,
+                          builder:
+                              (BuildContext context, value, Widget? child) {
+                            return ChooseItemGridSectionView(
+                              cinemaList: cinemaList ?? [],
+                              onSelected: (cinemaIndex, selectedTime) {
+                                bloc.chooseItemGrid(cinemaIndex, selectedTime);
+                              },
+                            );
+                          }),
+                      const SizedBox(
+                        height: MARGIN_LARGE,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              const SizedBox(
-                height: MARGIN_LARGE,
+              floatingActionButton: Padding(
+                padding: const EdgeInsets.only(
+                  left: 30.0,
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    goToNextPage(context, bloc);
+                  },
+                  child: AppTextButton(
+                    "Next",
+                    btnColor: bloc.selectedMovieTime == null ||
+                            bloc.selectedMovieTime == ""
+                        ? Colors.grey
+                        : PRIMARY_COLOR,
+                  ),
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(
-          left: 30.0,
-        ),
-        child: GestureDetector(
-          onTap: () {
-            goToNextPage(context);
-          },
-          child: AppTextButton(
-            "Next",
-            btnColor: selectedMovieTime == null || selectedMovieTime == ""
-                ? Colors.grey
-                : PRIMARY_COLOR,
-          ),
-        ),
-      ),
+            );
+          }),
     );
   }
 
-  void goToNextPage(BuildContext context) {
-    if (selectedMovieTime == null || selectedMovieTime == "") {
+  void goToNextPage(BuildContext context, MovieChooseTimeBloc bloc) {
+    if (bloc.selectedMovieTime == null || bloc.selectedMovieTime == "") {
     } else {
-      _navigateToSeatPlanPage(context, widget.movie, selectedDate,
-          selectedMovieTime!, selectedCinema!, cinema!, timeslotId!);
+      _navigateToSeatPlanPage(
+          context,
+          movie,
+          bloc.selectedDate,
+          bloc.selectedMovieTime!,
+          bloc.selectedCinema!,
+          bloc.cinema!,
+          bloc.timeslotId!);
     }
-  }
-
-  void chooseMovieDate() {
-    authModel.getCinemaDayTimeSlotFromDataBase(selectedDate).listen((cinema) {
-      setState(() {
-        cinemaList = cinema;
-      });
-    }).onError((error) {
-      debugPrint(error.toString());
-    });
-  }
-
-  void chooseItemGrid(int? cinemaIndex, int? selectedTime) {
-    timeslotId =
-        cinemaList?[cinemaIndex!].timeslots?[selectedTime!].cinemaDayTimeslotId;
-    cinema = cinemaList![cinemaIndex!];
-    selectedCinema = cinemaList?[cinemaIndex].cinema;
-    selectedMovieTime =
-        cinemaList?[cinemaIndex].timeslots?[selectedTime!].startTime;
-    setState(() {
-      // set False to all
-      cinemaList?.map((cinema) {
-        cinema.timeslots?.map((time) {
-          time.isSelected = false;
-        }).toList();
-      }).toList();
-
-      // set True to selected Time
-      cinemaList?[cinemaIndex].timeslots?[selectedTime!].isSelected = true;
-    });
   }
 }
 
@@ -267,7 +235,7 @@ class ChooseItemGridView extends StatelessWidget {
 }
 
 class MovieChooseDateView extends StatelessWidget {
-  Function(String?) onSelected;
+  Function(String) onSelected;
   MovieChooseDateView({required this.onSelected});
   @override
   Widget build(BuildContext context) {
