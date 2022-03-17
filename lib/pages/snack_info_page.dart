@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_booking/data/models/auth/auth_model.dart';
-import 'package:movie_booking/data/models/auth/auth_model_impl.dart';
+import 'package:movie_booking/blocs/snack_payment_bloc.dart';
 import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/data/vos/payment_vo.dart';
@@ -9,8 +8,9 @@ import 'package:movie_booking/network/snack_request.dart';
 import 'package:movie_booking/pages/payment_info_page.dart';
 import 'package:movie_booking/resources/color.dart';
 import 'package:movie_booking/widgets/app_text_button.dart';
+import 'package:provider/provider.dart';
 
-class SnackInfoPage extends StatefulWidget {
+class SnackInfoPage extends StatelessWidget {
   MovieVO? movieName;
   final String date;
   String? time;
@@ -34,152 +34,135 @@ class SnackInfoPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  _SnackInfoPageState createState() => _SnackInfoPageState();
-}
-
-class _SnackInfoPageState extends State<SnackInfoPage> {
-  AuthModel authModel = AuthModelImpl();
-  String selectPayment = "";
-  List<SnackVO> snackList = [];
-  List<PaymentVO>? paymentList;
-  double grandTotal = 0;
-  List<SnackRequest>? snackRequest;
-  @override
-  void initState() {
-    grandTotal += widget.totalCost;
-
-    // snack list
-    authModel.getSnackListFromDatabase().listen((snack) {
-      setState(() {
-        snackList = snack!;
-      });
-    }).onError((error) {
-      debugPrint(error.toString());
-    });
-
-    /// payment methods
-    authModel.getPaymentMethodListFromDatabase().listen((payment) {
-      setState(() {
-        paymentList = payment;
-      });
-    }).onError((error) {
-      debugPrint(error.toString());
-    });
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.white,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.black,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SnackInfoListView(
-              snackList: snackList,
-              onAdded: (index) {
-                addQuantity(index);
-              },
-              onRemoved: (index) {
-                subtractQuantity(index);
-              },
-            ),
-            const SizedBox(
-              height: 10.0,
-            ),
-            PromoTextFormView(
-              totalCost: grandTotal,
-            ),
-            const SizedBox(
-              height: 20.0,
-            ),
-            PaymentMethodView(
-              paymentList: paymentList ?? [],
-              selectedPayment: (selectIndex) {
-                selectedPaymentMethods(selectIndex);
-              },
-            ),
-            const SizedBox(
-              height: 200.0,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(
-          left: 30.0,
-        ),
-        child: GestureDetector(
-          onTap: () {
-            goToNextPage(context);
-          },
-          child: AppTextButton(
-            "Pay \$ $grandTotal",
-            btnColor: selectPayment == "" ? Colors.grey : PRIMARY_COLOR,
-          ),
-        ),
-      ),
+    return ChangeNotifierProvider(
+      create: (context) => SnackPaymentBloc(),
+      child: Selector<SnackPaymentBloc, List<PaymentVO>?>(
+          selector: (BuildContext context, bloc) => bloc.paymentList,
+          builder: (BuildContext context, value, Widget? child) {
+            SnackPaymentBloc bloc =
+                Provider.of<SnackPaymentBloc>(context, listen: false);
+            return Scaffold(
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                elevation: 0.0,
+                backgroundColor: Colors.white,
+                leading: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Selector<SnackPaymentBloc, List<SnackVO>>(
+                        selector: (BuildContext context, bloc) =>
+                            bloc.snackList,
+                        builder:
+                            (BuildContext context, snackList, Widget? child) {
+                          SnackPaymentBloc bloc = Provider.of<SnackPaymentBloc>(
+                              context,
+                              listen: false);
+                          return SnackInfoListView(
+                            snackList: snackList,
+                            onAdded: (index) {
+                              bloc.addQuantity(index);
+                            },
+                            onRemoved: (index) {
+                              bloc.subtractQuantity(index);
+                            },
+                          );
+                        }),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    Selector<SnackPaymentBloc, double>(
+                        selector: (BuildContext context, bloc) =>
+                            bloc.grandTotal,
+                        builder:
+                            (BuildContext context, grandTotal, Widget? child) {
+                          return PromoTextFormView(
+                            totalCost: grandTotal,
+                          );
+                        }),
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+                    Selector<SnackPaymentBloc, List<PaymentVO>?>(
+                        selector: (BuildContext context, bloc) =>
+                            bloc.paymentList,
+                        builder:
+                            (BuildContext context, paymentList, Widget? child) {
+                          SnackPaymentBloc bloc = Provider.of<SnackPaymentBloc>(
+                              context,
+                              listen: false);
+                          return PaymentMethodView(
+                            paymentList: paymentList ?? [],
+                            selectedPayment: (selectIndex) {
+                              bloc.selectedPaymentMethods(selectIndex);
+                            },
+                          );
+                        }),
+                    const SizedBox(
+                      height: 200.0,
+                    ),
+                  ],
+                ),
+              ),
+              floatingActionButton: Padding(
+                padding: const EdgeInsets.only(
+                  left: 30.0,
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    goToNextPage(context, bloc);
+                  },
+                  child: Selector<SnackPaymentBloc, double>(
+                      selector: (BuildContext context, bloc) => bloc.grandTotal,
+                      builder:
+                          (BuildContext context, grandTotal, Widget? child) {
+                        return Selector<SnackPaymentBloc, String>(
+                            selector: (BuildContext context, bloc) =>
+                                bloc.selectPayment,
+                            builder: (BuildContext context, selectPayment,
+                                Widget? child) {
+                              return AppTextButton(
+                                "Pay \$ $grandTotal",
+                                btnColor: selectPayment == ""
+                                    ? Colors.grey
+                                    : PRIMARY_COLOR,
+                              );
+                            });
+                      }),
+                ),
+              ),
+            );
+          }),
     );
   }
 
-  void goToNextPage(BuildContext context) {
-    if (selectPayment != "") {
+  void goToNextPage(BuildContext context, SnackPaymentBloc bloc) {
+    List<SnackRequest>? snackRequest;
+    if (bloc.selectPayment != "") {
       snackRequest?.add(SnackRequest(1, 1));
       _navigateToPaymentInfoPage(
           context,
-          widget.movieName!,
-          widget.date,
-          widget.time!,
-          widget.cinemaName!,
-          widget.cinema,
-          widget.row,
-          widget.seat,
-          grandTotal,
-          widget.timeslot,
+          movieName!,
+          date,
+          time!,
+          cinemaName!,
+          cinema,
+          row,
+          seat,
+          bloc.grandTotal,
+          timeslot,
           snackRequest ?? [SnackRequest(1, 2)]);
     }
-  }
-
-  void selectedPaymentMethods(int? selectIndex) {
-    setState(() {
-      selectPayment = paymentList![selectIndex!].name!;
-      paymentList?.map((payment) => payment.isSelected = false).toList();
-      paymentList?[selectIndex].isSelected = true;
-    });
-  }
-
-  void subtractQuantity(int index) {
-    setState(() {
-      int q = snackList[index].quantity!;
-      if (q != 0) {
-        q--;
-        grandTotal -= snackList[index].price!;
-        snackList[index].quantity = q;
-      }
-    });
-  }
-
-  void addQuantity(int index) {
-    setState(() {
-      int q = snackList[index].quantity!;
-      q++;
-      snackList[index].quantity = q;
-      grandTotal += snackList[index].price!;
-    });
   }
 }
 

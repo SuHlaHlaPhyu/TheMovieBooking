@@ -75,13 +75,18 @@ class MovieChooseTimePage extends StatelessWidget {
                   onTap: () {
                     goToNextPage(context, bloc);
                   },
-                  child: AppTextButton(
-                    "Next",
-                    btnColor: bloc.selectedMovieTime == null ||
-                            bloc.selectedMovieTime == ""
-                        ? Colors.grey
-                        : PRIMARY_COLOR,
-                  ),
+                  child: Selector<MovieChooseTimeBloc, String?>(
+                      selector: (BuildContext context, bloc) =>
+                          bloc.selectedMovieTime,
+                      builder: (BuildContext context, value, Widget? child) {
+                        return AppTextButton(
+                          "Next",
+                          btnColor: bloc.selectedMovieTime == null ||
+                                  bloc.selectedMovieTime == ""
+                              ? Colors.grey
+                              : PRIMARY_COLOR,
+                        );
+                      }),
                 ),
               ),
             );
