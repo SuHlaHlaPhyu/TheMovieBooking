@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_booking/blocs/card_bloc.dart';
 import 'package:movie_booking/data/models/auth/auth_model.dart';
 import 'package:movie_booking/data/models/auth/auth_model_impl.dart';
 import 'package:movie_booking/data/vos/checkout_vo.dart';
@@ -11,6 +12,7 @@ import 'package:movie_booking/network/snack_request.dart';
 import 'package:movie_booking/resources/color.dart';
 import 'package:movie_booking/resources/dimension.dart';
 import 'package:movie_booking/widgets/app_text_button.dart';
+import 'package:provider/provider.dart';
 
 import 'add_new_card_page.dart';
 import 'ticket_info_page.dart';
@@ -45,21 +47,17 @@ class PaymentInfoPage extends StatefulWidget {
 }
 
 class _PaymentInfoPageState extends State<PaymentInfoPage> {
-  AuthModel authModel = AuthModelImpl();
-  List<UserCardVO>? cardList;
-  CheckOutRequest? checkOutRequest;
+  // AuthModel authModel = AuthModelImpl();
+  // List<UserCardVO>? cardList;
+  // CheckOutRequest? checkOutRequest;
+  //CheckoutVO? checkoutVO;
+  late CardBloc bloc;
   int cardId = 0;
-  late CheckoutVO checkoutVO;
 
   @override
   void initState() {
-    /// user card list
-    authModel.getUserCardsFromDatabase().listen((card) {
-      setState(() {
-        cardList = card;
-      });
-    }).onError((error) {
-      debugPrint(error.toString());
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      bloc = Provider.of<CardBloc>(context, listen: false);
     });
 
     super.initState();
@@ -67,70 +65,77 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0.0,
+    return ChangeNotifierProvider(
+      create: (context) => CardBloc(),
+      child: Scaffold(
         backgroundColor: Colors.white,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.black,
+        appBar: AppBar(
+          elevation: 0.0,
+          backgroundColor: Colors.white,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.black,
+            ),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: MARGIN_MEDIUM_2,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PaymentAmountView(
-              totalCost: widget.totalCost ?? 0.0,
-            ),
-            const SizedBox(
-              height: MARGIN_MEDIUM_3,
-            ),
-            CarouselSlider(
-              options: CarouselOptions(
-                onPageChanged: (index, reason) {
-                  cardId = cardList?[index].id ?? 0;
-                },
-                height: BARCODE_WIDTH,
-                aspectRatio: 2.0,
-                enlargeCenterPage: true,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: MARGIN_MEDIUM_2,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PaymentAmountView(
+                totalCost: widget.totalCost ?? 0.0,
               ),
-              items: cardList
-                  ?.map(
-                    (card) => PaymentCardView(card),
-                  )
-                  .toList(),
-            ),
-            const SizedBox(
-              height: MARGIN_MEDIUM_3,
-            ),
-            AddNewCardView(
-              () {
-                _navigateToAddNewCardPage(context);
-              },
-            ),
-          ],
+              const SizedBox(
+                height: MARGIN_MEDIUM_3,
+              ),
+              Selector<CardBloc, List<UserCardVO>?>(
+                  selector: (BuildContext context, bloc) => bloc.cardList,
+                  builder: (BuildContext context, cardList, Widget? child) {
+                    return CarouselSlider(
+                      options: CarouselOptions(
+                        onPageChanged: (index, reason) {
+                          cardId = cardList?[index].id ?? 0;
+                        },
+                        height: BARCODE_WIDTH,
+                        aspectRatio: 2.0,
+                        enlargeCenterPage: true,
+                      ),
+                      items: cardList
+                          ?.map(
+                            (card) => PaymentCardView(card),
+                          )
+                          .toList(),
+                    );
+                  }),
+              const SizedBox(
+                height: MARGIN_MEDIUM_3,
+              ),
+              AddNewCardView(
+                () {
+                  _navigateToAddNewCardPage(context);
+                },
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(
-          left: MARGIN_XLARGE,
-        ),
-        child: GestureDetector(
-          onTap: () {
-            goToNextPage(context);
-          },
-          child: AppTextButton(
-            "Confrim",
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(
+            left: MARGIN_XLARGE,
+          ),
+          child: GestureDetector(
+            onTap: () {
+              goToNextPage(context);
+            },
+            child: AppTextButton(
+              "Confrim",
+            ),
           ),
         ),
       ),
@@ -138,7 +143,7 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
   }
 
   void goToNextPage(BuildContext context) {
-     CheckOutRequest checkOutRequest = CheckOutRequest(
+    CheckOutRequest checkOutRequest = CheckOutRequest(
         widget.timeslot,
         widget.seat,
         widget.date,
@@ -148,12 +153,15 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
         widget.cinema.cinemaId ?? 1,
         widget.row,
         widget.totalCost ?? 0.0);
-    authModel.checkout(checkOutRequest).then((value) {
-      setState(() {
-        checkoutVO = value!;
-      });
-      _navigateToTicketInfoPage(context, checkoutVO, widget.movie);
+    bloc.sendCheckoutRequest(checkOutRequest).then((value) {
+      _navigateToTicketInfoPage(context, value, widget.movie);
     });
+    // authModel.checkout(checkOutRequest).then((value) {
+    //   setState(() {
+    //     checkoutVO = value!;
+    //   });
+    //   _navigateToTicketInfoPage(context, checkoutVO!, widget.movie);
+    // });
   }
 }
 

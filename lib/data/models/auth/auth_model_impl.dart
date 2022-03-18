@@ -114,42 +114,46 @@ class AuthModelImpl extends AuthModel {
 
   /// reactive
   @override
-  void loginWithEmail(String email, String password) {
-    _dataAgent.loginWithEmail(email, password).then((value) async {
+  Future<List> loginWithEmail(String email, String password) {
+    return _dataAgent.loginWithEmail(email, password).then((value) async {
       UserDataVO user = value[2];
       user.userToken = value[3];
       userDataDao.saveUserData(user);
+      return Future.value(value);
     });
   }
 
   @override
-  void registerWithEmail(String name, String email, String phone,
+  Future<List> registerWithEmail(String name, String email, String phone,
       String password, String googleToken, String facebookToken) {
-    _dataAgent
+    return _dataAgent
         .registerWithEmail(
             name, email, phone, password, googleToken, facebookToken)
         .then((value) async {
       UserDataVO user = value[2];
       user.userToken = value[3];
       userDataDao.saveUserData(user);
+      return Future.value(value);
     });
   }
 
   @override
-  void loginWithFacebook(String accessToken) {
-    _dataAgent.loginWithFacebook(accessToken).then((value) async {
+  Future<List> loginWithFacebook(String accessToken) {
+    return _dataAgent.loginWithFacebook(accessToken).then((value) async {
       UserDataVO user = value[2];
       user.userToken = value[3];
       userDataDao.saveUserData(user);
+      return Future.value(value);
     });
   }
 
   @override
-  void loginWithGoogle(String accessToken) {
-    _dataAgent.loginWithGoogle(accessToken).then((value) async {
+  Future<List> loginWithGoogle(String accessToken) {
+    return _dataAgent.loginWithGoogle(accessToken).then((value) async {
       UserDataVO user = value[2];
       user.userToken = value[3];
       userDataDao.saveUserData(user);
+      return Future.value(value);
     });
   }
 

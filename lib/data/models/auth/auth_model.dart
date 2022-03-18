@@ -38,12 +38,12 @@ abstract class AuthModel {
   Stream<List<UserCardVO>?> getUserCardsFromDatabase();
 
   /// stream
-  void loginWithEmail(
+  Future<List> loginWithEmail(
     String email,
     String password,
   );
 
-  void registerWithEmail(
+  Future<List> registerWithEmail(
     String name,
     String email,
     String phone,
@@ -52,10 +52,10 @@ abstract class AuthModel {
     String facebookToken,
   );
 
-  void loginWithGoogle(
+  Future<List> loginWithGoogle(
     String accessToken,
   );
-  void loginWithFacebook(
+  Future<List> loginWithFacebook(
     String accessToken,
   );
 

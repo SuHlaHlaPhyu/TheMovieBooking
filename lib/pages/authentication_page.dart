@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:movie_booking/blocs/authentication_bloc.dart';
 import 'package:movie_booking/data/models/auth/auth_model.dart';
 import 'package:movie_booking/data/models/auth/auth_model_impl.dart';
 import 'package:movie_booking/data/models/movie/movie_model.dart';
@@ -14,6 +15,7 @@ import 'package:movie_booking/widgets/app_icon_text_button.dart';
 import 'package:movie_booking/widgets/app_text_button.dart';
 import 'package:movie_booking/widgets/sub_text.dart';
 import 'package:movie_booking/widgets/title_text.dart';
+import 'package:provider/provider.dart';
 
 import 'home_page.dart';
 
@@ -65,118 +67,161 @@ class _AuthenticationPageState extends State<AuthenticationPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.only(
-          top: MARGIN_XXXLARGE,
-          left: MARGIN_MEDIUM_3,
-          right: MARGIN_MEDIUM_3,
-        ),
-        child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TitleText(
-                    WELCOME_SCREEN_TITLE_TEXT,
-                  ),
-                  const SizedBox(
-                    height: MARGIN_MEDIUM_2,
-                  ),
-                  SubText(
-                    AUTH_SCREEN_WELCOME_SUB_TEXT,
-                  ),
-                  const SizedBox(
-                    height: MARGIN_MEDIUM_4,
-                  ),
-                  Container(
-                    height: MARGIN_XXLARGE,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                    ),
-                    child: TabBar(
-                      indicatorColor: PRIMARY_COLOR,
-                      controller: _tabController,
-                      labelColor: PRIMARY_COLOR,
-                      labelStyle: const TextStyle(
-                        color: PRIMARY_COLOR,
+    return ChangeNotifierProvider(
+      create: (context) => AuthenticationBloc(),
+      child: Selector<AuthenticationBloc, UserDataVO?>(
+          selector: (BuildContext context, bloc) => bloc.userData,
+          builder: (BuildContext context, value, Widget? child) {
+            return Scaffold(
+              backgroundColor: Colors.white,
+              body: Padding(
+                padding: const EdgeInsets.only(
+                  top: MARGIN_XXXLARGE,
+                  left: MARGIN_MEDIUM_3,
+                  right: MARGIN_MEDIUM_3,
+                ),
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TitleText(
+                            WELCOME_SCREEN_TITLE_TEXT,
+                          ),
+                          const SizedBox(
+                            height: MARGIN_MEDIUM_2,
+                          ),
+                          SubText(
+                            AUTH_SCREEN_WELCOME_SUB_TEXT,
+                          ),
+                          const SizedBox(
+                            height: MARGIN_MEDIUM_4,
+                          ),
+                          Container(
+                            height: MARGIN_XXLARGE,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            child: TabBar(
+                              indicatorColor: PRIMARY_COLOR,
+                              controller: _tabController,
+                              labelColor: PRIMARY_COLOR,
+                              labelStyle: const TextStyle(
+                                color: PRIMARY_COLOR,
+                              ),
+                              unselectedLabelColor: Colors.black,
+                              tabs: [
+                                Tab(
+                                  child: SubText(
+                                    LOGIN_TEXT,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Tab(
+                                  child: SubText(
+                                    SIGNIN_TEXT,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      unselectedLabelColor: Colors.black,
-                      tabs: [
-                        Tab(
-                          child: SubText(
-                            LOGIN_TEXT,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      Expanded(
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            AuthFormView(
+                              loginFormKey,
+                              _nameController,
+                              _nameFocus,
+                              _phoneController,
+                              _phoneFocus,
+                              _emailController,
+                              _emailFocus,
+                              _passwordController,
+                              _passwordFocus,
+                              false,
+                              onTap: () {
+                                ///
+                                loginWithEmail(context);
+                              },
+                              onTapGoogle: () {
+                                googleLogin(context);
+                              },
+                              onTapFacebook: () {
+                                facebookLogin(context);
+                              },
+                            ),
+                            AuthFormView(
+                              signupFormKey,
+                              _nameController,
+                              _nameFocus,
+                              _phoneController,
+                              _phoneFocus,
+                              _emailController,
+                              _emailFocus,
+                              _passwordController,
+                              _passwordFocus,
+                              true,
+                              onTap: () {
+                                accountRegister(context);
+                              },
+                              onTapGoogle: () {
+                                googleSignIn();
+                              },
+                              onTapFacebook: () async {
+                                facebookSignIn();
+                              },
+                            ),
+                          ],
                         ),
-                        Tab(
-                          child: SubText(
-                            SIGNIN_TEXT,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    AuthFormView(
-                      loginFormKey,
-                      _nameController,
-                      _nameFocus,
-                      _phoneController,
-                      _phoneFocus,
-                      _emailController,
-                      _emailFocus,
-                      _passwordController,
-                      _passwordFocus,
-                      false,
-                      onTap: () {
-                        emailLogin(context);
-                      },
-                      onTapGoogle: () {
-                        googleLogin(context);
-                      },
-                      onTapFacebook: () {
-                        facebookLogin(context);
-                      },
-                    ),
-                    AuthFormView(
-                      signupFormKey,
-                      _nameController,
-                      _nameFocus,
-                      _phoneController,
-                      _phoneFocus,
-                      _emailController,
-                      _emailFocus,
-                      _passwordController,
-                      _passwordFocus,
-                      true,
-                      onTap: () {
-                        accountRegister(context);
-                      },
-                      onTapGoogle: () {
-                        googleSignIn();
-                      },
-                      onTapFacebook: () async {
-                        facebookSignIn();
-                      },
-                    ),
-                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            );
+          }),
     );
+  }
+
+  void loginWithEmail(BuildContext context) {
+    AuthenticationBloc bloc =
+        Provider.of<AuthenticationBloc>(context, listen: false);
+    if (loginFormKey.currentState!.validate()) {
+      bloc
+          .onTapEmailLogin(_phoneController.text.toString(),
+              _emailController.text.toString())
+          .then(
+            (value) => _navigateToHomeScreen(
+              context,
+            ),
+          );
+    }
+  }
+
+  void googleLogin(BuildContext context) {
+    AuthenticationBloc bloc =
+        Provider.of<AuthenticationBloc>(context, listen: false);
+    bloc.googleLogin().then((value) {
+      _navigateToHomeScreen(
+        context,
+      );
+    });
+  }
+
+  void facebookLogin(BuildContext context) {
+    AuthenticationBloc bloc =
+        Provider.of<AuthenticationBloc>(context, listen: false);
+    bloc.facebookLogin().then((value) {
+      _navigateToHomeScreen(
+        context,
+      );
+    });
   }
 
   void facebookSignIn() {
@@ -225,58 +270,22 @@ class _AuthenticationPageState extends State<AuthenticationPage>
   }
 
   void accountRegister(BuildContext context) {
+    AuthenticationBloc bloc =
+        Provider.of<AuthenticationBloc>(context, listen: false);
     if (signupFormKey.currentState!.validate()) {
-      print(
-          "info ====> \n name : ${_nameController.text} \n email : ${_phoneController.text} \n password : ${_emailController.text} \n phone : ${_passwordController.text} \n");
-      authModel.registerWithEmail(
-          _nameController.text.toString(),
-          _phoneController.text.toString(),
-          _passwordController.text.toString(),
-          _emailController.text.toString(),
-          googleToken,
-          facebookToken);
-      _navigateToHomeScreen(
-        context,
-      );
-    }
-  }
-
-  void facebookLogin(BuildContext context) {
-    FacebookAuth.instance
-        .login(permissions: ["public_profile", "email"]).then((value) {
-      print("accessToken =======> ${value.accessToken?.token}");
-      authModel.loginWithFacebook(value.accessToken?.userId ?? "");
-      _navigateToHomeScreen(
-        context,
-      );
-    });
-  }
-
-  void googleLogin(BuildContext context) {
-    GoogleSignIn _googleSignIn = GoogleSignIn(
-      scopes: [
-        'email',
-        'https://www.googleapis.com/auth/contacts.readonly',
-      ],
-    );
-    _googleSignIn.signIn().then((googleAccount) {
-      googleAccount?.authentication.then((authentication) {
-        authModel.loginWithGoogle(authentication.accessToken ?? "");
+      bloc
+          .registerWithEmail(
+              _nameController.text.toString(),
+              _phoneController.text.toString(),
+              _passwordController.text.toString(),
+              _emailController.text.toString(),
+              googleToken,
+              facebookToken)
+          .then((value) {
         _navigateToHomeScreen(
           context,
         );
-        print("authentication accessToken ${authentication.accessToken}");
       });
-    });
-  }
-
-  void emailLogin(BuildContext context) {
-    if (loginFormKey.currentState!.validate()) {
-      authModel.loginWithEmail(
-          _phoneController.text.toString(), _emailController.text.toString());
-      _navigateToHomeScreen(
-        context,
-      );
     }
   }
 }
@@ -497,3 +506,7 @@ class InputTextFormView extends StatelessWidget {
     );
   }
 }
+
+
+  // print(
+      //   "info ====> \n name : ${_nameController.text} \n email : ${_phoneController.text} \n password : ${_emailController.text} \n phone : ${_passwordController.text} \n");

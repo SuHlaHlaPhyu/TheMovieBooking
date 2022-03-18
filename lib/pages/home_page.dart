@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:movie_booking/blocs/authentication_bloc.dart';
 import 'package:movie_booking/blocs/home_bloc.dart';
 import 'package:movie_booking/data/models/auth/auth_model.dart';
 import 'package:movie_booking/data/models/auth/auth_model_impl.dart';
@@ -36,19 +37,19 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    authModel.getUserTokenfromDatabase().then((value) {
-      token = value;
-      if (token != null || token == "") {
-        authModel.getUserDatafromDatabase().listen((user) {
-          userData = user;
-        }).onError((error) {
-          debugPrint(error.toString());
-        });
-      }
-      print("token ====> $token");
-    }).catchError((error) {
-      debugPrint("error from db" + error.toString());
-    });
+    // authModel.getUserTokenfromDatabase().then((value) {
+    //   token = value;
+    //   if (token != null || token == "") {
+    //     authModel.getUserDatafromDatabase().listen((user) {
+    //       userData = user;
+    //     }).onError((error) {
+    //       debugPrint(error.toString());
+    //     });
+    //   }
+    //   print("token ====> $token");
+    // }).catchError((error) {
+    //   debugPrint("error from db" + error.toString());
+    // });
 
     /// snack list
     authModel.getSnackList();
@@ -81,86 +82,92 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => HomeBloc(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        drawer: DrawerView(
-          menuItem: menuItem,
-          userDataVO: userData,
-          onTap: () {
-            showLogoutConfirm();
-          },
-        ),
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          iconTheme: const IconThemeData(
-            color: Colors.black,
-          ),
-          elevation: 0.0,
-          actions: const [
-            Padding(
-              padding: EdgeInsets.only(
-                right: MARGIN_MEDIUM_2,
+      child: Selector<HomeBloc, UserDataVO?>(
+          selector: (BuildContext context, bloc) => bloc.userData,
+          builder: (BuildContext context, userData, Widget? child) {
+            return Scaffold(
+              backgroundColor: Colors.white,
+              drawer: DrawerView(
+                menuItem: menuItem,
+                userDataVO: userData,
+                onTap: () {
+                  showLogoutConfirm();
+                },
               ),
-              child: Icon(
-                Icons.search,
-                color: Colors.black,
-                size: MARGIN_XLARGE,
+              appBar: AppBar(
+                backgroundColor: Colors.white,
+                iconTheme: const IconThemeData(
+                  color: Colors.black,
+                ),
+                elevation: 0.0,
+                actions: const [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      right: MARGIN_MEDIUM_2,
+                    ),
+                    child: Icon(
+                      Icons.search,
+                      color: Colors.black,
+                      size: MARGIN_XLARGE,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: MARGIN_MEDIUM,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ProfileView(
-                  name: userData?.name ?? "",
+              body: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: MARGIN_MEDIUM,
                 ),
-                const SizedBox(
-                  height: MARGIN_MEDIUM_3,
-                ),
-                Selector<HomeBloc, List<MovieVO>?>(
-                  selector: (BuildContext context, bloc) =>
-                      bloc.nowShowingMovies,
-                  builder:
-                      (BuildContext context, nowShowingMovies, Widget? child) {
-                    return NowShowingSectionView(
-                      NOW_SHOWING_MOVIE_LIST_TEXT,
-                      movieList: nowShowingMovies,
-                      onTapMovie: (movieId) => _navigateToMovieDetailsScreen(
-                        context,
-                        movieId,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ProfileView(
+                        name: userData?.name ?? "",
                       ),
-                    );
-                  },
-                ),
-                const SizedBox(
-                  height: MARGIN_XLARGE,
-                ),
-                Selector<HomeBloc, List<MovieVO>?>(
-                  selector: (BuildContext context, bloc) =>
-                      bloc.comingSoonMovies,
-                  builder:
-                      (BuildContext context, comingSoonMovies, Widget? child) {
-                    return ComingSoonSectionView(
-                      COMING_SOON_MOVIE_LIST_TEXT,
-                      movieList: comingSoonMovies,
-                      onTapMovie: (movieId) => _navigateToMovieDetailsScreen(
-                        context,
-                        movieId,
+                      const SizedBox(
+                        height: MARGIN_MEDIUM_3,
                       ),
-                    );
-                  },
+                      Selector<HomeBloc, List<MovieVO>?>(
+                        selector: (BuildContext context, bloc) =>
+                            bloc.nowShowingMovies,
+                        builder: (BuildContext context, nowShowingMovies,
+                            Widget? child) {
+                          return NowShowingSectionView(
+                            NOW_SHOWING_MOVIE_LIST_TEXT,
+                            movieList: nowShowingMovies,
+                            onTapMovie: (movieId) =>
+                                _navigateToMovieDetailsScreen(
+                              context,
+                              movieId,
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(
+                        height: MARGIN_XLARGE,
+                      ),
+                      Selector<HomeBloc, List<MovieVO>?>(
+                        selector: (BuildContext context, bloc) =>
+                            bloc.comingSoonMovies,
+                        builder: (BuildContext context, comingSoonMovies,
+                            Widget? child) {
+                          return ComingSoonSectionView(
+                            COMING_SOON_MOVIE_LIST_TEXT,
+                            movieList: comingSoonMovies,
+                            onTapMovie: (movieId) =>
+                                _navigateToMovieDetailsScreen(
+                              context,
+                              movieId,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
-      ),
+              ),
+            );
+          }),
     );
   }
 
