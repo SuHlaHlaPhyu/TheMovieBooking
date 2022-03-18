@@ -17,9 +17,10 @@ class MovieChooseTimeBloc extends ChangeNotifier {
   /// model
   AuthModel authModel = AuthModelImpl();
 
-  void getTimeSlotbyCurrentDate() {
+  MovieChooseTimeBloc() {
     authModel.getCinemaDayTimeSlotFromDataBase(currentDate).listen((cinema) {
       cinemaList = cinema ?? [];
+      selectedDate = currentDate;
       notifyListeners();
     }).onError((error) {});
   }

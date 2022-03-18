@@ -1,8 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_booking/blocs/card_bloc.dart';
-import 'package:movie_booking/data/models/auth/auth_model.dart';
-import 'package:movie_booking/data/models/auth/auth_model_impl.dart';
 import 'package:movie_booking/data/vos/checkout_vo.dart';
 import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
@@ -47,10 +45,6 @@ class PaymentInfoPage extends StatefulWidget {
 }
 
 class _PaymentInfoPageState extends State<PaymentInfoPage> {
-  // AuthModel authModel = AuthModelImpl();
-  // List<UserCardVO>? cardList;
-  // CheckOutRequest? checkOutRequest;
-  //CheckoutVO? checkoutVO;
   late CardBloc bloc;
   int cardId = 0;
 

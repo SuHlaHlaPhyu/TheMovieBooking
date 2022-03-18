@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 import '../data/models/auth/auth_model.dart';
 import '../data/models/auth/auth_model_impl.dart';

@@ -32,6 +32,7 @@ class HomeBloc extends ChangeNotifier {
 
     authModel.getUserDatafromDatabase().listen((user) {
       userData = user;
+      notifyListeners();
     }).onError((error) {
       debugPrint(error.toString());
     });
