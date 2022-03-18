@@ -9,9 +9,7 @@ import '../network/checkout_request.dart';
 class CardBloc extends ChangeNotifier {
   /// state
   List<UserCardVO>? cardList;
-  CheckOutRequest? checkOutRequest;
-  int cardId = 0;
-  late CheckoutVO checkoutVO;
+  CheckoutVO? checkoutVO;
 
   /// model
   AuthModel authModel = AuthModelImpl();
@@ -27,8 +25,8 @@ class CardBloc extends ChangeNotifier {
 
   Future<CheckoutVO> sendCheckoutRequest(CheckOutRequest request) {
     return authModel.checkout(request).then((value) {
-      checkoutVO = value!;
-      return Future.value(value);
+      checkoutVO = value;
+      return Future.value(checkoutVO);
     });
   }
 }

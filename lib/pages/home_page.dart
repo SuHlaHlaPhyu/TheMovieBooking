@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:movie_booking/blocs/authentication_bloc.dart';
 import 'package:movie_booking/blocs/home_bloc.dart';
-import 'package:movie_booking/data/models/auth/auth_model.dart';
-import 'package:movie_booking/data/models/auth/auth_model_impl.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
 import 'package:movie_booking/listItems/menu_item.dart';
@@ -16,7 +12,6 @@ import 'package:movie_booking/widgets/sub_text.dart';
 import 'package:movie_booking/widgets/title_text.dart';
 import 'package:provider/provider.dart';
 
-import '../data/vos/snack_vo.dart';
 import 'movie_detail_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -27,35 +22,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  AuthModel authModel = AuthModelImpl();
-  List<SnackVO> snackList = [];
-
-  UserDataVO? userData;
-  String? token;
-
-  final googleSignIn = GoogleSignIn();
-
-  @override
-  void initState() {
-    // authModel.getUserTokenfromDatabase().then((value) {
-    //   token = value;
-    //   if (token != null || token == "") {
-    //     authModel.getUserDatafromDatabase().listen((user) {
-    //       userData = user;
-    //     }).onError((error) {
-    //       debugPrint(error.toString());
-    //     });
-    //   }
-    //   print("token ====> $token");
-    // }).catchError((error) {
-    //   debugPrint("error from db" + error.toString());
-    // });
-
-    /// snack list
-    authModel.getSnackList();
-    super.initState();
-  }
-
   final List<MenuItem> menuItem = [
     MenuItem(
       'Promotion Code',
@@ -91,7 +57,8 @@ class _HomePageState extends State<HomePage> {
                 menuItem: menuItem,
                 userDataVO: userData,
                 onTap: () {
-                  showLogoutConfirm();
+                  HomeBloc bloc = Provider.of(context, listen: false);
+                  showLogoutConfirm(bloc);
                 },
               ),
               appBar: AppBar(
@@ -171,7 +138,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void showLogoutConfirm() {
+  void showLogoutConfirm(HomeBloc bloc) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -201,8 +168,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               onPressed: () {
-                authModel.logout();
-                _navigateToWelcomeScreen(context);
+                bloc.logout().then((value) {
+                  _navigateToWelcomeScreen(context);
+                });
               },
             ),
           ],

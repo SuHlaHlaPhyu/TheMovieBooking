@@ -45,17 +45,7 @@ class PaymentInfoPage extends StatefulWidget {
 }
 
 class _PaymentInfoPageState extends State<PaymentInfoPage> {
-  late CardBloc bloc;
   int cardId = 0;
-
-  @override
-  void initState() {
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      bloc = Provider.of<CardBloc>(context, listen: false);
-    });
-
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,24 +109,30 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
             ],
           ),
         ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(
-            left: MARGIN_XLARGE,
-          ),
-          child: GestureDetector(
-            onTap: () {
-              goToNextPage(context);
-            },
-            child: AppTextButton(
-              "Confrim",
-            ),
-          ),
-        ),
+        floatingActionButton: Selector<CardBloc, CheckoutVO?>(
+            selector: (BuildContext context, bloc) => bloc.checkoutVO,
+            builder: (BuildContext context, value, Widget? child) {
+              return Padding(
+                padding: const EdgeInsets.only(
+                  left: MARGIN_XLARGE,
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    CardBloc bloc =
+                        Provider.of<CardBloc>(context, listen: false);
+                    goToNextPage(context, bloc);
+                  },
+                  child: AppTextButton(
+                    "Confrim",
+                  ),
+                ),
+              );
+            }),
       ),
     );
   }
 
-  void goToNextPage(BuildContext context) {
+  void goToNextPage(BuildContext context, CardBloc bloc) {
     CheckOutRequest checkOutRequest = CheckOutRequest(
         widget.timeslot,
         widget.seat,
@@ -150,12 +146,6 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
     bloc.sendCheckoutRequest(checkOutRequest).then((value) {
       _navigateToTicketInfoPage(context, value, widget.movie);
     });
-    // authModel.checkout(checkOutRequest).then((value) {
-    //   setState(() {
-    //     checkoutVO = value!;
-    //   });
-    //   _navigateToTicketInfoPage(context, checkoutVO!, widget.movie);
-    // });
   }
 }
 

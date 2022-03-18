@@ -37,4 +37,9 @@ class HomeBloc extends ChangeNotifier {
       debugPrint(error.toString());
     });
   }
+
+  /// logout
+  Future<List> logout() {
+    return Future.value(authModel.logout());
+  }
 }
