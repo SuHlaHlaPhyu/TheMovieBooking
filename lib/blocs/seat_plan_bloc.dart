@@ -55,6 +55,8 @@ class SeatPlanBloc extends ChangeNotifier {
     if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
       String name = seatPlan[index].seatName!;
       row = seatPlan[index].symbol;
+
+      /// new list
       var newList = seatPlan.map((item) {
         int i = seatPlan.indexOf(item);
         if (i == index) {
@@ -70,7 +72,10 @@ class SeatPlanBloc extends ChangeNotifier {
         }
         return item;
       }).toList();
+
+      /// assign new list to origin
       seatPlan = newList;
+
       if (seatName.contains(name)) {
         seatName.remove(name);
       } else {

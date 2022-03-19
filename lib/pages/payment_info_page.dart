@@ -143,8 +143,10 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
         widget.cinema.cinemaId ?? 1,
         widget.row,
         widget.totalCost ?? 0.0);
-    bloc.sendCheckoutRequest(checkOutRequest).then((value) {
-      _navigateToTicketInfoPage(context, value, widget.movie);
+    bloc
+        .sendCheckoutRequest(checkOutRequest, widget.movie)
+        .then((checkoutRequest) {
+      _navigateToTicketInfoPage(context, checkoutRequest, widget.movie);
     });
   }
 }

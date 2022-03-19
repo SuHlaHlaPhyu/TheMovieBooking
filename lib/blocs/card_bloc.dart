@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:movie_booking/data/vos/movie_vo.dart';
 
 import '../data/models/auth/auth_model.dart';
 import '../data/models/auth/auth_model_impl.dart';
@@ -10,6 +11,7 @@ class CardBloc extends ChangeNotifier {
   /// state
   List<UserCardVO>? cardList;
   CheckoutVO? checkoutVO;
+  MovieVO? movieVO;
 
   /// model
   AuthModel authModel = AuthModelImpl();
@@ -23,9 +25,12 @@ class CardBloc extends ChangeNotifier {
     });
   }
 
-  Future<CheckoutVO> sendCheckoutRequest(CheckOutRequest request) {
+  Future<CheckoutVO> sendCheckoutRequest(
+      CheckOutRequest request, MovieVO movie) {
     return authModel.checkout(request).then((value) {
+      movieVO = movie;
       checkoutVO = value;
+      notifyListeners();
       return Future.value(checkoutVO);
     });
   }
