@@ -54,7 +54,6 @@ class MovieDetailPage extends StatelessWidget {
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  //mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const SizedBox(
                                       height: MARGIN_MEDIUM_3,

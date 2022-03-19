@@ -1,12 +1,6 @@
 //
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movie_booking/blocs/authentication_bloc.dart';
-import 'package:movie_booking/data/models/auth/auth_model.dart';
-import 'package:movie_booking/data/models/auth/auth_model_impl.dart';
-import 'package:movie_booking/data/models/movie/movie_model.dart';
-import 'package:movie_booking/data/models/movie/movie_model_impl.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
 import 'package:movie_booking/resources/color.dart';
 import 'package:movie_booking/resources/dimension.dart';
@@ -43,15 +37,15 @@ class _AuthenticationPageState extends State<AuthenticationPage>
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _phoneFocus = FocusNode();
 
-  MovieModel movieModel = MovieModelImpl();
-  AuthModel authModel = AuthModelImpl();
-  String? message;
-  UserDataVO? userData;
-  String? token;
-  int? code;
-  String googleToken = "";
-  String facebookToken = "";
-  Map _userObj = {};
+  // MovieModel movieModel = MovieModelImpl();
+  // AuthModel authModel = AuthModelImpl();
+  // String? message;
+  // UserDataVO? userData;
+  // String? token;
+  // int? code;
+  // String googleToken = "";
+  // String facebookToken = "";
+  // Map _userObj = {};
 
   @override
   void initState() {
@@ -156,27 +150,53 @@ class _AuthenticationPageState extends State<AuthenticationPage>
                                 facebookLogin(context);
                               },
                             ),
-                            AuthFormView(
-                              signupFormKey,
-                              _nameController,
-                              _nameFocus,
-                              _phoneController,
-                              _phoneFocus,
-                              _emailController,
-                              _emailFocus,
-                              _passwordController,
-                              _passwordFocus,
-                              true,
-                              onTap: () {
-                                accountRegister(context);
-                              },
-                              onTapGoogle: () {
-                                googleSignIn();
-                              },
-                              onTapFacebook: () async {
-                                facebookSignIn();
-                              },
-                            ),
+                            Selector<AuthenticationBloc, String?>(
+                                selector: (BuildContext context, bloc) =>
+                                    bloc.name,
+                                builder: (BuildContext context, name,
+                                    Widget? child) {
+                                  return Selector<AuthenticationBloc, String?>(
+                                      selector: (BuildContext context, bloc) =>
+                                          bloc.email,
+                                      builder: (BuildContext context, email,
+                                          Widget? child) {
+                                        return AuthFormView(
+                                          signupFormKey,
+                                          _nameController =
+                                              TextEditingController(
+                                            text: name,
+                                          ),
+                                          _nameFocus,
+                                          _phoneController =
+                                              TextEditingController(
+                                            text: email,
+                                          ),
+                                          _phoneFocus,
+                                          _emailController,
+                                          _emailFocus,
+                                          _passwordController,
+                                          _passwordFocus,
+                                          true,
+                                          onTap: () {
+                                            accountRegister(context);
+                                          },
+                                          onTapGoogle: () {
+                                            AuthenticationBloc bloc =
+                                                Provider.of<AuthenticationBloc>(
+                                                    context,
+                                                    listen: false);
+                                            bloc.googleSignIn();
+                                          },
+                                          onTapFacebook: () {
+                                            AuthenticationBloc bloc =
+                                                Provider.of<AuthenticationBloc>(
+                                                    context,
+                                                    listen: false);
+                                            bloc.facebookSignIn();
+                                          },
+                                        );
+                                      });
+                                }),
                           ],
                         ),
                       ),
@@ -225,48 +245,15 @@ class _AuthenticationPageState extends State<AuthenticationPage>
   }
 
   void facebookSignIn() {
-    FacebookAuth.instance
-        .login(permissions: ["public_profile", "email"]).then((value) {
-      FacebookAuth.instance.getUserData().then((userData) {
-        setState(() {
-          _userObj = userData;
-          _nameController = TextEditingController(text: _userObj["name"]);
-          _phoneController = TextEditingController(text: _userObj["email"]);
-          // facebookToken = value.accessToken?.token ?? "";
-          facebookToken = value.accessToken?.userId ?? "";
-        });
-        print(
-            "facebook user obj =======> ${_userObj["name"]} ${_userObj["email"]}");
-        print("facebook user id =======> ${value.accessToken?.userId}");
-        print("facebook access token =======> ${value.accessToken?.token}");
-      });
-    });
+    AuthenticationBloc bloc =
+        Provider.of<AuthenticationBloc>(context, listen: false);
+    bloc.facebookSignIn();
   }
 
   void googleSignIn() {
-    GoogleSignIn _googleSignIn = GoogleSignIn(
-      scopes: [
-        'email',
-        'https://www.googleapis.com/auth/contacts.readonly',
-      ],
-    );
-    _googleSignIn.signIn().then((googleAccount) {
-      googleAccount?.authentication.then((authentication) {
-        setState(() {
-          _nameController = TextEditingController(
-            text: googleAccount.displayName,
-          );
-          _phoneController = TextEditingController(
-            text: googleAccount.email,
-          );
-          googleToken = authentication.accessToken ?? "";
-          //  googleToken = googleAccount.id;
-        });
-        print("authentication id Token =======> ${googleAccount.id}");
-        print(
-            "authentication access Token =======> ${authentication.accessToken}");
-      });
-    });
+    AuthenticationBloc bloc =
+        Provider.of<AuthenticationBloc>(context, listen: false);
+    bloc.googleSignIn();
   }
 
   void accountRegister(BuildContext context) {
@@ -279,8 +266,8 @@ class _AuthenticationPageState extends State<AuthenticationPage>
               _phoneController.text.toString(),
               _passwordController.text.toString(),
               _emailController.text.toString(),
-              googleToken,
-              facebookToken)
+              bloc.googleToken,
+              bloc.facebookToken)
           .then((value) {
         _navigateToHomeScreen(
           context,

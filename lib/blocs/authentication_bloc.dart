@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -15,6 +17,7 @@ class AuthenticationBloc extends ChangeNotifier {
   String googleToken = "";
   String facebookToken = "";
   Map _userObj = {};
+  String? name, email;
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: [
@@ -80,6 +83,28 @@ class AuthenticationBloc extends ChangeNotifier {
   }
 
   /// google sign in
+  void googleSignIn() {
+    _googleSignIn.signIn().then((googleAccount) {
+      googleAccount?.authentication.then((authentication) {
+        name = googleAccount.displayName;
+        email = googleAccount.email;
+        googleToken = authentication.accessToken ?? "";
+        notifyListeners();
+      });
+    });
+  }
 
   /// facebook sign in
+  void facebookSignIn() {
+    FacebookAuth.instance
+        .login(permissions: ["public_profile", "email"]).then((value) {
+      FacebookAuth.instance.getUserData().then((userData) {
+        _userObj = userData;
+        name = _userObj["name"];
+        email = _userObj["email"];
+        facebookToken = value.accessToken?.userId ?? "";
+        notifyListeners();
+      });
+    });
+  }
 }
