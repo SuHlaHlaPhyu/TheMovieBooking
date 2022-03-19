@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:intl/intl.dart';
 
 import '../data/models/auth/auth_model.dart';
 import '../data/models/auth/auth_model_impl.dart';
 import '../data/vos/seating_plan_vo.dart';
 import '../resources/string.dart';
+import 'package:collection/collection.dart';
 
 class SeatPlanBloc extends ChangeNotifier {
   /// states
@@ -36,21 +36,93 @@ class SeatPlanBloc extends ChangeNotifier {
         seatPlan[index].isSelected = false;
         totalPrice -= seatPlan[index].price!;
         totalTickets -= 1;
-        notifyListeners();
       } else {
         seatPlan[index].isSelected = true;
         totalPrice += seatPlan[index].price!;
         totalTickets += 1;
-        notifyListeners();
       }
       if (seatName.contains(name)) {
         seatName.remove(name);
-        notifyListeners();
       } else {
         seatName.add(name);
-        notifyListeners();
+      }
+      notifyListeners();
+    }
+  }
+
+  /// index
+  void selectedMovieSeatIndex(int? index) {
+    if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
+      String name = seatPlan[index].seatName!;
+      row = seatPlan[index].symbol;
+      var newList = seatPlan.map((item) {
+        int i = seatPlan.indexOf(item);
+        if (i == index) {
+          if (seatPlan[i].isSelected == true) {
+            seatPlan[i].isSelected = false;
+            totalPrice -= seatPlan[i].price!;
+            totalTickets -= 1;
+          } else {
+            seatPlan[i].isSelected = true;
+            totalPrice += seatPlan[i].price!;
+            totalTickets += 1;
+          }
+        }
+        return item;
+      }).toList();
+      seatPlan = newList;
+      if (seatName.contains(name)) {
+        seatName.remove(name);
+      } else {
+        seatName.add(name);
+      }
+      notifyListeners();
+    }
+  }
+
+  /// object
+  void onTapMovieSeatSection(SeatingPlanVO selectedSeat) {
+    if (selectedSeat.type == SEAT_TYPE_AVAILABLE) {
+      String name = selectedSeat.seatName!;
+      row = selectedSeat.symbol;
+
+      var newList = seatPlan.map((item) {
+        if (item == selectedSeat) {
+          if (item.isSelected == true) {
+            item.isSelected = false;
+            totalPrice -= item.price!;
+            totalTickets -= 1;
+          } else if (item.isSelected == false) {
+            item.isSelected = true;
+            totalPrice += item.price!;
+            totalTickets += 1;
+          }
+        }
+        return item;
+      }).toList();
+      seatPlan = newList;
+      notifyListeners();
+      if (seatName.contains(name)) {
+        seatName.remove(name);
+      } else {
+        seatName.add(name);
       }
       notifyListeners();
     }
   }
 }
+
+
+      // List<SeatingPlanVO> newList = seatPlan.map((seat) {
+      //   if (seatPlan[index].isSelected == true) {
+      //     seatPlan[index].isSelected = false;
+      //     totalPrice -= seatPlan[index].price!;
+      //     totalTickets -= 1;
+      //   } else {
+      //     seatPlan[index].isSelected = true;
+      //     totalPrice += seatPlan[index].price!;
+      //     totalTickets += 1;
+      //   }
+      //   return seat;
+      // }).toList();
+      // seatPlan = newList;

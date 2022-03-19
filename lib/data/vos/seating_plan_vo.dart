@@ -52,6 +52,13 @@ class SeatingPlanVO {
 
   @override
   String toString() {
-    return 'SeatingPlanVO{id: $id, type: $type,seatName: $id, symbol: $symbol,price: $price}';
+    return 'SeatingPlanVO{id: $id, type: $type,seatName: $id, symbol: $symbol,price: $price, isSelected : $isSelected}';
   }
+
+  @override
+  int get hashCode => isSelected.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      other is SeatingPlanVO && isSelected == other.isSelected;
 }

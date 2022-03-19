@@ -49,10 +49,11 @@ class MovieChooseTimePage extends StatelessWidget {
                         },
                       ),
                       Selector<MovieChooseTimeBloc, List<CinemaVO>?>(
+                          shouldRebuild: (previous, next) => previous != next,
                           selector: (BuildContext context, bloc) =>
                               bloc.cinemaList,
-                          builder:
-                              (BuildContext context, value, Widget? child) {
+                          builder: (BuildContext context, cinemaList,
+                              Widget? child) {
                             return ChooseItemGridSectionView(
                               cinemaList: cinemaList ?? [],
                               onSelected: (cinemaIndex, selectedTime) {

@@ -37,16 +37,6 @@ class _AuthenticationPageState extends State<AuthenticationPage>
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _phoneFocus = FocusNode();
 
-  // MovieModel movieModel = MovieModelImpl();
-  // AuthModel authModel = AuthModelImpl();
-  // String? message;
-  // UserDataVO? userData;
-  // String? token;
-  // int? code;
-  // String googleToken = "";
-  // String facebookToken = "";
-  // Map _userObj = {};
-
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);

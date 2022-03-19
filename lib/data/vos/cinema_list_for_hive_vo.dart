@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/persistance/hive_constant.dart';
+
 part 'cinema_list_for_hive_vo.g.dart';
 
 @HiveType(
@@ -13,8 +14,16 @@ class CinemaListForHiveVO {
   CinemaListForHiveVO(
     this.cinemaList,
   );
-   @override
+  @override
   String toString() {
     return 'CinemaListForHiveVO{cinemaList: $cinemaList,}';
   }
+
+  // @override
+  // int get hashCode => cinemaList.hashCode;
+
+  // @override
+  // bool operator ==(Object other) {
+  //   return other is CinemaListForHiveVO && cinemaList == other.cinemaList;
+  // }
 }

@@ -61,6 +61,7 @@ class SnackInfoPage extends StatelessWidget {
                 child: Column(
                   children: [
                     Selector<SnackPaymentBloc, List<SnackVO>>(
+                        shouldRebuild: (previous, next) => previous != next,
                         selector: (BuildContext context, bloc) =>
                             bloc.snackList,
                         builder:
@@ -71,10 +72,10 @@ class SnackInfoPage extends StatelessWidget {
                           return SnackInfoListView(
                             snackList: snackList,
                             onAdded: (index) {
-                              bloc.addQuantity(index);
+                              bloc.addQuantity(snackList[index]);
                             },
                             onRemoved: (index) {
-                              bloc.subtractQuantity(index);
+                              bloc.subtractQuantity(snackList[index]);
                             },
                           );
                         }),
@@ -94,6 +95,7 @@ class SnackInfoPage extends StatelessWidget {
                       height: 20.0,
                     ),
                     Selector<SnackPaymentBloc, List<PaymentVO>?>(
+                        shouldRebuild: (previous, next) => previous != next,
                         selector: (BuildContext context, bloc) =>
                             bloc.paymentList,
                         builder:
