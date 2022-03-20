@@ -72,7 +72,6 @@ class SeatPlanPage extends StatelessWidget {
                         movieSeats: seatPlan,
                         onSelected: (index) {
                           bloc.selectedMovieSeatSection(index);
-                          // bloc.onTapMovieSeatSection(seatPlan[index!]);
                         },
                       );
                     }),

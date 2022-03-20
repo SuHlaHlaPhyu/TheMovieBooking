@@ -28,63 +28,6 @@ class SeatPlanBloc extends ChangeNotifier {
     });
   }
 
-  void selectedMovieSeatSection(int? index) {
-    if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
-      String name = seatPlan[index].seatName!;
-      row = seatPlan[index].symbol;
-      if (seatPlan[index].isSelected == true) {
-        seatPlan[index].isSelected = false;
-        totalPrice -= seatPlan[index].price!;
-        totalTickets -= 1;
-      } else {
-        seatPlan[index].isSelected = true;
-        totalPrice += seatPlan[index].price!;
-        totalTickets += 1;
-      }
-      if (seatName.contains(name)) {
-        seatName.remove(name);
-      } else {
-        seatName.add(name);
-      }
-      notifyListeners();
-    }
-  }
-
-  /// index
-  void selectedMovieSeatIndex(int? index) {
-    if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
-      String name = seatPlan[index].seatName!;
-      row = seatPlan[index].symbol;
-
-      /// new list
-      var newList = seatPlan.map((item) {
-        int i = seatPlan.indexOf(item);
-        if (i == index) {
-          if (seatPlan[i].isSelected == true) {
-            seatPlan[i].isSelected = false;
-            totalPrice -= seatPlan[i].price!;
-            totalTickets -= 1;
-          } else {
-            seatPlan[i].isSelected = true;
-            totalPrice += seatPlan[i].price!;
-            totalTickets += 1;
-          }
-        }
-        return item;
-      }).toList();
-
-      /// assign new list to origin
-      seatPlan = newList;
-
-      if (seatName.contains(name)) {
-        seatName.remove(name);
-      } else {
-        seatName.add(name);
-      }
-      notifyListeners();
-    }
-  }
-
   /// object
   void onTapMovieSeatSection(SeatingPlanVO selectedSeat) {
     if (selectedSeat.type == SEAT_TYPE_AVAILABLE) {
@@ -106,7 +49,6 @@ class SeatPlanBloc extends ChangeNotifier {
         return item;
       }).toList();
       seatPlan = newList;
-      notifyListeners();
       if (seatName.contains(name)) {
         seatName.remove(name);
       } else {
@@ -115,7 +57,145 @@ class SeatPlanBloc extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // void selectedMovieSeatSection(int? index) {
+  //   if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
+  //     String name = seatPlan[index].seatName!;
+  //     row = seatPlan[index].symbol;
+  //     var newList = seatPlan.map((element) {
+  //       int i = seatPlan.indexOf(element);
+  //       if (i == index) {
+  //         if (seatPlan[i].isSelected == true) {
+  //           seatPlan[i].isSelected = false;
+  //           totalPrice -= seatPlan[i].price!;
+  //           totalTickets -= 1;
+  //         } else {
+  //           seatPlan[i].isSelected = true;
+  //           totalPrice += seatPlan[i].price!;
+  //           totalTickets += 1;
+  //         }
+  //       }
+  //       return element;
+  //     }).toList();
+  //     seatPlan = newList;
+  //     if (seatName.contains(name)) {
+  //       seatName.remove(name);
+  //     } else {
+  //       seatName.add(name);
+  //     }
+  //     notifyListeners();
+  //   }
+  // }
+
+  void selectedMovieSeatSection(int? selectedIndex) {
+    if (seatPlan[selectedIndex!].type == SEAT_TYPE_AVAILABLE) {
+      String name = seatPlan[selectedIndex].seatName!;
+      row = seatPlan[selectedIndex].symbol;
+      var newList = seatPlan.mapIndexed((index, element) {
+        if (selectedIndex == index) {
+          if (element.isSelected == true) {
+            element.isSelected = false;
+            totalPrice -= element.price!;
+            totalTickets -= 1;
+          } else {
+            element.isSelected = true;
+            totalPrice += element.price!;
+            totalTickets += 1;
+          }
+        }
+        return element;
+      }).toList();
+      seatPlan = newList;
+      if (seatName.contains(name)) {
+        seatName.remove(name);
+      } else {
+        seatName.add(name);
+      }
+      notifyListeners();
+    }
+  }
+
+  // void selectedMovieSeatSection(int? index) {
+  //   if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
+  //     String name = seatPlan[index].seatName!;
+  //     row = seatPlan[index].symbol;
+  //     if (seatPlan[index].isSelected == true) {
+  //       seatPlan[index].isSelected = false;
+  //       totalPrice -= seatPlan[index].price!;
+  //       totalTickets -= 1;
+  //     } else {
+  //       seatPlan[index].isSelected = true;
+  //       totalPrice += seatPlan[index].price!;
+  //       totalTickets += 1;
+  //     }
+  //     if (seatName.contains(name)) {
+  //       seatName.remove(name);
+  //     } else {
+  //       seatName.add(name);
+  //     }
+  //     notifyListeners();
+  //   }
+  // }
+
+  // void selectedMovieSeatSection(int? index) {
+  //   if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
+  //     String name = seatPlan[index].seatName!;
+  //     row = seatPlan[index].symbol;
+  //     if (seatPlan[index].isSelected == true) {
+  //       seatPlan[index].isSelected = false;
+  //       totalPrice -= seatPlan[index].price!;
+  //       totalTickets -= 1;
+  //     } else {
+  //       seatPlan[index].isSelected = true;
+  //       totalPrice += seatPlan[index].price!;
+  //       totalTickets += 1;
+  //     }
+  //     if (seatName.contains(name)) {
+  //       seatName.remove(name);
+  //     } else {
+  //       seatName.add(name);
+  //     }
+  //     notifyListeners();
+  //   }
+  // }
 }
+
+
+
+  // /// index
+  // void selectedMovieSeatIndex(int? index) {
+  //   if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
+  //     String name = seatPlan[index].seatName!;
+  //     row = seatPlan[index].symbol;
+
+  //     /// new list
+  //     var newList = seatPlan.map((item) {
+  //       int i = seatPlan.indexOf(item);
+  //       if (i == index) {
+  //         if (seatPlan[i].isSelected == true) {
+  //           seatPlan[i].isSelected = false;
+  //           totalPrice -= seatPlan[i].price!;
+  //           totalTickets -= 1;
+  //         } else {
+  //           seatPlan[i].isSelected = true;
+  //           totalPrice += seatPlan[i].price!;
+  //           totalTickets += 1;
+  //         }
+  //       }
+  //       return item;
+  //     }).toList();
+
+  //     /// assign new list to origin
+  //     seatPlan = newList;
+
+  //     if (seatName.contains(name)) {
+  //       seatName.remove(name);
+  //     } else {
+  //       seatName.add(name);
+  //     }
+  //     notifyListeners();
+  //   }
+  // }
 
 
       // List<SeatingPlanVO> newList = seatPlan.map((seat) {
