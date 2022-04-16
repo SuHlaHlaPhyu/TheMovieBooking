@@ -490,11 +490,16 @@ class MovieView extends StatelessWidget {
         Container(
           width: HOME_SCREEN_MOVIE_WIDTH,
           child: Center(
-            child: Text(
-              movie?.title ?? "",
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
+            child: GestureDetector(
+              onTap: () {
+                onTapMovie();
+              },
+              child: Text(
+                movie?.title ?? "",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

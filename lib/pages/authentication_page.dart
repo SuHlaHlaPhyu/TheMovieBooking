@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:movie_booking/blocs/authentication_bloc.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
@@ -64,7 +63,7 @@ class _AuthenticationPageState extends State<AuthenticationPage>
                   left: MARGIN_MEDIUM_3,
                   right: MARGIN_MEDIUM_3,
                 ),
-                child: Container(
+                child: SizedBox(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -302,10 +301,11 @@ class AuthFormView extends StatelessWidget {
     this._phoneController,
     this._phoneFocus,
     this._isSignIn, {
+    Key? key,
     required this.onTap,
     required this.onTapGoogle,
     required this.onTapFacebook,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -326,6 +326,7 @@ class AuthFormView extends StatelessWidget {
                 TextInputType.text,
                 NAME_CONTROLLER_LABEL_TEXT,
                 NAME_CONTROLLER_ERROR_TEXT,
+                const ValueKey('input.name'),
               ),
             ),
             const SizedBox(
@@ -339,6 +340,7 @@ class AuthFormView extends StatelessWidget {
                 TextInputType.phone,
                 PHONE_CONTROLLER_LABEL_TEXT,
                 PHONE_CONTROLLER_ERROR_TEXT,
+                const ValueKey('input.phone'),
               ),
             ),
             const SizedBox(
@@ -350,6 +352,7 @@ class AuthFormView extends StatelessWidget {
               TextInputType.emailAddress,
               EMAIL_CONTROLLER_LABEL_TEXT,
               EMAIL_CONTROLLER_ERROR_TEXT,
+              const ValueKey('input.email'),
             ),
             const SizedBox(
               height: MARGIN_MEDIUM_4,
@@ -360,17 +363,18 @@ class AuthFormView extends StatelessWidget {
               TextInputType.visiblePassword,
               PASSWORD_CONTROLLER_LABEL_TEXT,
               PASSWORD_CONTROLLER_ERROR_TEXT,
+              const ValueKey('input.password'),
               obsureText: true,
             ),
             const SizedBox(
               height: MARGIN_MEDIUM_4,
             ),
-            SubText(
-              FORGOR_PASSWORD_TEXT,
-            ),
-            const SizedBox(
-              height: MARGIN_MEDIUM_4,
-            ),
+            // SubText(
+            //   FORGOR_PASSWORD_TEXT,
+            // ),
+            // const SizedBox(
+            //   height: MARGIN_MEDIUM_4,
+            // ),
             AuthButtonView(
               onTap: () => onTap(),
               onTapGoogle: () => onTapGoogle(),
@@ -400,29 +404,36 @@ class AuthButtonView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GestureDetector(
-          onTap: () => onTapFacebook(),
-          child: AppIconTextButton(
-            SIGNIN_WITH_FACEBOOK_BUTTON_TEXT,
-            'assets/facebook.png',
-            btnColor: Colors.transparent,
+        Visibility(
+          visible: false,
+          child: GestureDetector(
+            onTap: () => onTapFacebook(),
+            child: AppIconTextButton(
+              SIGNIN_WITH_FACEBOOK_BUTTON_TEXT,
+              'assets/facebook.png',
+              btnColor: Colors.transparent,
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: MARGIN_MEDIUM_4,
+        ),
+        Visibility(
+          visible: false,
+          child: GestureDetector(
+            onTap: () => onTapGoogle(),
+            child: AppIconTextButton(
+              SIGNIN_WITH_GOOGLE_BUTTON_TEXT,
+              'assets/google.png',
+              btnColor: Colors.transparent,
+            ),
           ),
         ),
         const SizedBox(
           height: MARGIN_MEDIUM_4,
         ),
         GestureDetector(
-          onTap: () => onTapGoogle(),
-          child: AppIconTextButton(
-            SIGNIN_WITH_GOOGLE_BUTTON_TEXT,
-            'assets/google.png',
-            btnColor: Colors.transparent,
-          ),
-        ),
-        const SizedBox(
-          height: MARGIN_MEDIUM_4,
-        ),
-        GestureDetector(
+          key: const ValueKey("confirm"),
           onTap: () => onTap(),
           child: AppTextButton(
             CONFIRM_BUTTON_TEXT,
@@ -440,17 +451,21 @@ class InputTextFormView extends StatelessWidget {
   final String _labelText;
   final String _errorText;
   final bool obsureText;
-  InputTextFormView(
+  final Key keyName;
+  const InputTextFormView(
     this._textController,
     this._textFocus,
     this._textInputType,
     this._labelText,
-    this._errorText, {
+    this._errorText,
+    this.keyName, {
+    Key? key,
     this.obsureText = false,
-  });
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: keyName,
       controller: _textController,
       focusNode: _textFocus,
       keyboardType: _textInputType,
@@ -484,6 +499,5 @@ class InputTextFormView extends StatelessWidget {
   }
 }
 
-
-  // print(
-      //   "info ====> \n name : ${_nameController.text} \n email : ${_phoneController.text} \n password : ${_emailController.text} \n phone : ${_passwordController.text} \n");
+// print(
+//   "info ====> \n name : ${_nameController.text} \n email : ${_phoneController.text} \n password : ${_emailController.text} \n phone : ${_passwordController.text} \n");

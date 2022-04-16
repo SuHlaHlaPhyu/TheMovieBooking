@@ -160,11 +160,11 @@ class CastView extends StatelessWidget {
         ),
         Wrap(
           children: [
-            ...castList!
-                .map(
+            ...castList
+                ?.map(
                   (cast) => CastAvatarView(cast),
                 )
-                .toList(),
+                .toList() ?? [],
           ],
         ),
       ],
@@ -178,15 +178,15 @@ class CastAvatarView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      children: [
+      children: const [
         CircleAvatar(
           maxRadius: MARGIN_XLARGE,
           minRadius: MARGIN_XLARGE,
           backgroundImage: NetworkImage(
-            "$IMAGE_BASE_URL${cast.profilePath}",
-          ),
+              // "$IMAGE_BASE_URL${cast.profilePath}",
+              "https://1409791524.rsc.cdn77.org/data/images/full/606683/blackpink-jisoo-mesmerizes-fans-in-new-instagram-photos.jpeg?w=900"),
         ),
-        const SizedBox(
+        SizedBox(
           width: MARGIN_MEDIUM,
         )
       ],
