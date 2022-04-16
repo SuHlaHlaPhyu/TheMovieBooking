@@ -15,5 +15,3 @@ const String TEST_DATA_GET_TICKETS = "Get your tickets";
 /// choose date and time
 const String TEST_DATA_CHOOSE_DATE_TIME = "10:00 AM";
 const String TEST_DATA_NEXT = "Next";
-
-/// choose seat
