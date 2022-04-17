@@ -98,5 +98,19 @@ void main() async {
     await tester.pumpAndSettle(const Duration(seconds: 5));
     await tester.tap(find.text(TEST_DATA_NEXT));
     await tester.pumpAndSettle(const Duration(seconds: 5));
+
+    /// choose seat
+    final seatOneFinder = find.byKey(const ValueKey('A-2'));
+    final seatTwoFinder = find.byKey(const ValueKey('A-4'));
+    final buttonSeatFinder = find.byKey(const ValueKey('buyTicket'));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await tester.tap(seatOneFinder);
+    await tester.tap(seatTwoFinder);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    expect(find.text(TEST_DATA_SEAT), findsOneWidget);
+    expect(find.text(TEST_DATA_SEAT_COUNT), findsOneWidget);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await tester.tap(buttonSeatFinder);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
   });
 }

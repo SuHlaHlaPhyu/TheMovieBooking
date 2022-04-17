@@ -108,6 +108,7 @@ class SeatPlanPage extends StatelessWidget {
         floatingActionButton: Builder(builder: (context) {
           SeatPlanBloc bloc = Provider.of(context, listen: false);
           return Padding(
+            key: const ValueKey("buyTicket"),
             padding: const EdgeInsets.only(
               left: 30.0,
             ),
@@ -320,6 +321,7 @@ class MovieSeatItemView extends StatelessWidget {
         onSelected();
       },
       child: Container(
+        key: ValueKey(movieSeats.seatName ?? 'A'),
         margin: const EdgeInsets.symmetric(
           horizontal: MARGIN_SMALL_2,
           vertical: MARGIN_SMALL_2,
