@@ -18,7 +18,7 @@ class CardBloc extends ChangeNotifier {
 
   CardBloc() {
     authModel.getUserCardsFromDatabase().listen((card) {
-      cardList = card;
+      cardList = card?.reversed.toList();
       notifyListeners();
     }).onError((error) {
       debugPrint(error.toString());

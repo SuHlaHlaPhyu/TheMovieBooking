@@ -60,6 +60,7 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
                   TextInputType.number,
                   CARD_NUMBER_TEXT,
                   CARD_NUMBER_ERROE_TEXT,
+                  const ValueKey("cardNum"),
                 ),
                 const SizedBox(
                   height: 15.0,
@@ -70,6 +71,7 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
                   TextInputType.text,
                   CARD_HOLDER_TEXT,
                   CARD_HOLDER_ERROE_TEXT,
+                  const ValueKey("cardHolder"),
                 ),
                 const SizedBox(
                   height: 15.0,
@@ -83,6 +85,7 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
                         TextInputType.text,
                         EXPIRED_DATE_TEXT,
                         EXPIRED_DATE_ERROE_TEXT,
+                        const ValueKey("expDate"),
                       ),
                     ),
                     const SizedBox(
@@ -95,6 +98,7 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
                         TextInputType.number,
                         CARD_TYPE_TEXT,
                         CARD_TYPE_ERROE_TEXT,
+                        const ValueKey("cardType"),
                       ),
                     ),
                   ],
@@ -113,7 +117,7 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
                 addNewCard(context);
               },
               child: AppTextButton(
-                "Confrim",
+                "Confirm",
               ),
             ),
           );
@@ -144,17 +148,21 @@ class InputTextFormView extends StatelessWidget {
   final String _labelText;
   final String _errorText;
   final bool obsureText;
+  final Key keyName;
   InputTextFormView(
     this._textController,
     this._textFocus,
     this._textInputType,
     this._labelText,
-    this._errorText, {
+    this._errorText,
+      this.keyName,
+      {
     this.obsureText = false,
   });
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: keyName,
       expands: false,
       controller: _textController,
       focusNode: _textFocus,

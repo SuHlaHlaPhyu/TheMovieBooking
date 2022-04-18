@@ -17,5 +17,19 @@ const String TEST_DATA_CHOOSE_DATE_TIME = "10:00 AM";
 const String TEST_DATA_NEXT = "Next";
 
 /// choose seat
-const String TEST_DATA_SEAT = "A-2,A-4";
+const String TEST_DATA_SEAT = "A-3,A-5";
 const String TEST_DATA_SEAT_COUNT = "2";
+
+/// snack and payment
+const String TEST_DATA_SUBTOTAL = "Subtotal : 9.0\$";
+const String TEST_DATA_PAYMENT = "Credit card";
+
+/// new card
+const String TEST_DATA_TOTAL = "\$ 9.0";
+const String TEST_DATA_ADD_NEW_CARD = "Add new card";
+const String TEST_DATA_PAYMENT_CONFIRM = "Confirm";
+const String TEST_DATA_NEW_CARD_CONFIRM = "Confirm";
+const String TEST_DATA_CARD_NUM = "19191919";
+const String TEST_DATA_CARD_HOLDER = "TEST";
+const String TEST_DATA_EXP_DATE = "2024/07";
+const String TEST_DATA_CARD_TYPE = "111";

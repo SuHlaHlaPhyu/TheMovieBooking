@@ -117,6 +117,7 @@ class SnackInfoPage extends StatelessWidget {
                 ),
               ),
               floatingActionButton: Padding(
+                key:const ValueKey("pay"),
                 padding: const EdgeInsets.only(
                   left: 30.0,
                 ),
@@ -221,11 +222,16 @@ class PaymentMethodView extends StatelessWidget {
             leading: const Icon(
               Icons.credit_card,
             ),
-            title: Text(
-              payment.name ?? "",
-              style: TextStyle(
-                color:
-                    payment.isSelected == true ? PRIMARY_COLOR : Colors.black,
+            title: GestureDetector(
+              onTap: (){
+                selectedPayment(paymentList.indexOf(payment));
+              },
+              child: Text(
+                payment.name ?? "",
+                style: TextStyle(
+                  color:
+                      payment.isSelected == true ? PRIMARY_COLOR : Colors.black,
+                ),
               ),
             ),
             subtitle: Text(
@@ -382,8 +388,9 @@ class SnackInfoView extends StatelessWidget {
                   onTap: () {
                     onAdded();
                   },
-                  child: const Icon(
+                  child: Icon(
                     Icons.add,
+                    key: ValueKey(item.id ?? 0),
                   ),
                 ),
               ],

@@ -85,7 +85,7 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
                     return CarouselSlider(
                       options: CarouselOptions(
                         onPageChanged: (index, reason) {
-                          cardId = cardList?[index].id ?? 0;
+                          cardId = cardList?[index].id ?? 682;
                         },
                         height: BARCODE_WIDTH,
                         aspectRatio: 2.0,
@@ -95,7 +95,7 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
                           ?.map(
                             (card) => PaymentCardView(card),
                           )
-                          .toList(),
+                          .toList() ?? [],
                     );
                   }),
               const SizedBox(
@@ -123,7 +123,7 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
                     goToNextPage(context, bloc);
                   },
                   child: AppTextButton(
-                    "Confrim",
+                    "Confirm",
                   ),
                 ),
               );

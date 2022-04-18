@@ -100,8 +100,8 @@ void main() async {
     await tester.pumpAndSettle(const Duration(seconds: 5));
 
     /// choose seat
-    final seatOneFinder = find.byKey(const ValueKey('A-2'));
-    final seatTwoFinder = find.byKey(const ValueKey('A-4'));
+    final seatOneFinder = find.byKey(const ValueKey('A-3'));
+    final seatTwoFinder = find.byKey(const ValueKey('A-5'));
     final buttonSeatFinder = find.byKey(const ValueKey('buyTicket'));
     await tester.pumpAndSettle(const Duration(seconds: 5));
     await tester.tap(seatOneFinder);
@@ -111,6 +111,47 @@ void main() async {
     expect(find.text(TEST_DATA_SEAT_COUNT), findsOneWidget);
     await tester.pumpAndSettle(const Duration(seconds: 5));
     await tester.tap(buttonSeatFinder);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+
+    /// snack and payment
+    final snackOneFinder = find.byKey(const ValueKey(1));
+    final snackTwoFinder = find.byKey(const ValueKey(2));
+    final snackThreeFinder = find.byKey(const ValueKey(3));
+    final buttonSnackFinder = find.byKey(const ValueKey('pay'));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await tester.tap(snackOneFinder);
+    await tester.tap(snackTwoFinder);
+    await tester.tap(snackThreeFinder);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    expect(find.text(TEST_DATA_SUBTOTAL), findsOneWidget);
+    await tester.tap(find.text(TEST_DATA_PAYMENT));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await tester.tap(buttonSnackFinder);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+
+    /// card list
+    expect(find.text(TEST_DATA_TOTAL), findsOneWidget);
+    await tester.tap(find.text(TEST_DATA_ADD_NEW_CARD));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+
+    /// new card list
+    final cardNumFinder = find.byKey(const ValueKey('cardNum'));
+    final cardHolderFinder = find.byKey(const ValueKey('cardHolder'));
+    final expDateFinder = find.byKey(const ValueKey('expDate'));
+    final cardTypeFinder = find.byKey(const ValueKey('cardType'));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await tester.enterText(cardNumFinder, TEST_DATA_CARD_NUM);
+    await tester.enterText(cardHolderFinder, TEST_DATA_CARD_HOLDER);
+    await tester.enterText(expDateFinder, TEST_DATA_EXP_DATE);
+    await tester.enterText(cardTypeFinder, TEST_DATA_CARD_TYPE);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await tester.tap(find.text(TEST_DATA_NEW_CARD_CONFIRM));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    expect(find.text(TEST_DATA_CARD_NUM), findsOneWidget);
+    expect(find.text(TEST_DATA_CARD_HOLDER), findsOneWidget);
+    expect(find.text(TEST_DATA_EXP_DATE), findsOneWidget);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await tester.tap(find.text(TEST_DATA_PAYMENT_CONFIRM));
     await tester.pumpAndSettle(const Duration(seconds: 5));
   });
 }
