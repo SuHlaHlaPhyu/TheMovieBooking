@@ -45,7 +45,7 @@ class PaymentInfoPage extends StatefulWidget {
 }
 
 class _PaymentInfoPageState extends State<PaymentInfoPage> {
-  int cardId = 0;
+  int cardId = 682;
 
   @override
   Widget build(BuildContext context) {

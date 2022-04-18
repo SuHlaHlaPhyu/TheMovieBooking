@@ -58,7 +58,7 @@ void main() async {
   await Hive.openBox<UserCardVO>(BOX_NAME_USER_CARD_VO);
   await Hive.openBox<CinemaListForHiveVO>(BOX_NAME_CINEMA_LIST_FOR_HIVE_VO);
 
-  testWidgets("movie booking test", (WidgetTester tester) async {
+  testWidgets("movie booking UI test", (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
 
     await Future.delayed(const Duration(seconds: 3));
@@ -152,6 +152,14 @@ void main() async {
     expect(find.text(TEST_DATA_EXP_DATE), findsOneWidget);
     await tester.pumpAndSettle(const Duration(seconds: 5));
     await tester.tap(find.text(TEST_DATA_PAYMENT_CONFIRM));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+
+    /// checkout page
+    expect(find.text(TEST_DATA_NOW_SHOWING), findsOneWidget);
+    expect(find.text(TEST_DATA_SEAT), findsOneWidget);
+    expect(find.text(TEST_DATA_SEAT_COUNT), findsOneWidget);
+    expect(find.text(TEST_DATA_SEAT_SYMBOL), findsOneWidget);
+    expect(find.text(TEST_DATA_CHECKOUT_TOTAL), findsOneWidget);
     await tester.pumpAndSettle(const Duration(seconds: 5));
   });
 }
