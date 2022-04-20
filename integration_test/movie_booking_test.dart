@@ -163,3 +163,7 @@ void main() async {
     await tester.pumpAndSettle(const Duration(seconds: 5));
   });
 }
+
+/// test data that need to change
+/// seat name
+/// new card data

@@ -10,6 +10,12 @@ import 'package:movie_booking/network/auth/retrofit_auth_data_agent_impl.dart';
 import 'package:movie_booking/network/checkout_request.dart';
 import 'package:movie_booking/persistance/daos/card_dao.dart';
 import 'package:movie_booking/persistance/daos/cinema_day_timeslot_dao.dart';
+import 'package:movie_booking/persistance/daos/impl/card_dao_impl.dart';
+import 'package:movie_booking/persistance/daos/impl/cinema_day_timeslot_dao_impl.dart';
+import 'package:movie_booking/persistance/daos/impl/payment_method_dao_impl.dart';
+import 'package:movie_booking/persistance/daos/impl/seat_plan_dao_impl.dart';
+import 'package:movie_booking/persistance/daos/impl/snack_dao_impl.dart';
+import 'package:movie_booking/persistance/daos/impl/user_data_dao_impl.dart';
 import 'package:movie_booking/persistance/daos/payment_method_dao.dart';
 import 'package:movie_booking/persistance/daos/seat_plan_dao.dart';
 import 'package:movie_booking/persistance/daos/snack_dao.dart';
@@ -20,7 +26,7 @@ import '../../vos/cinema_list_for_hive_vo.dart';
 import 'auth_model.dart';
 
 class AuthModelImpl extends AuthModel {
-  final AuthDataAgent _dataAgent = RetrofitAuthDataAgentImpl();
+  AuthDataAgent dataAgent = RetrofitAuthDataAgentImpl();
 
   static final AuthModelImpl _singleton = AuthModelImpl._internal();
   factory AuthModelImpl() {
@@ -29,36 +35,38 @@ class AuthModelImpl extends AuthModel {
 
   AuthModelImpl._internal();
 
-  UserDataDao userDataDao = UserDataDao();
-  CinemaDayTimeslotDao timeSlotDao = CinemaDayTimeslotDao();
-  SeatPlanDao seatPlanDao = SeatPlanDao();
-  SnackDao snackDao = SnackDao();
-  PaymentMethodDao paymentMethodDao = PaymentMethodDao();
-  UserCardDao userCardDao = UserCardDao();
+  /// Daos
+  UserDataDao userDataDao = UserDataDaoImpl();
+  CinemaDayTimeslotDao timeSlotDao = CinemaDayTimeslotDaoImpl();
+  SeatPlanDao seatPlanDao = SeatPlanDaoImpl();
+  SnackDao snackDao = SnackDaoImpl();
+  PaymentMethodDao paymentMethodDao = PaymentMethodDaoImpl();
+  UserCardDao userCardDao = UserCardDaoImpl();
+
+  /// for testing purpose
+  void setDaosAndDataAgents(
+      UserDataDao userDataDaoTest,
+      CinemaDayTimeslotDao timeSlotDaoTest,
+      SeatPlanDao seatPlanDaoTest,
+      SnackDao snackDaoTest,
+      PaymentMethodDao paymentMethodDaoTest,
+      UserCardDao userCardDaoTest,
+      AuthDataAgent authDataAgentTest
+      ) {
+    userCardDao = userCardDaoTest;
+    timeSlotDao = timeSlotDaoTest;
+    seatPlanDao = seatPlanDaoTest;
+    snackDao = snackDaoTest;
+    paymentMethodDao = paymentMethodDaoTest;
+    userDataDao = userDataDaoTest;
+    dataAgent = authDataAgentTest;
+  }
 
   /// from network
-
-  // @override
-  // Future<List<CinemaVO>?> getCinemaDayTimeSlot(String date) {
-  //   String token = "Bearer " + userDataDao.getUserToken().toString();
-  //   return _dataAgent.getCinemaDayTimeSlot(token, date).then((value) {
-  //     List<CinemaVO> timeSlotList = value!.map((timeSlot) {
-  //       timeSlot.timeslots?.map((time) {
-  //         time.isSelected = false;
-  //         return time;
-  //       }).toList();
-  //       return timeSlot;
-  //     }).toList();
-  //     CinemaListForHiveVO cinemaList = CinemaListForHiveVO(timeSlotList);
-  //     timeSlotDao.saveAllCinemaDayTimeslot(date, cinemaList);
-  //     return Future.value(value);
-  //   });
-  // }
-
   @override
   Future<List> logout() {
     String token = "Bearer " + userDataDao.getUserToken().toString();
-    return _dataAgent.logout(token).then((value) {
+    return dataAgent.logout(token).then((value) {
       userDataDao.clearUserData();
       return Future.value(value);
     });
@@ -68,7 +76,7 @@ class AuthModelImpl extends AuthModel {
   Future<List<List<SeatingPlanVO>>?> getCinemaSeatingPlan(
       int cinemaDaytimeslotId, String bookingDate) {
     String token = "Bearer " + userDataDao.getUserToken().toString();
-    return _dataAgent
+    return dataAgent
         .getCinemaSeatingPlan(token, cinemaDaytimeslotId, bookingDate)
         .then((value) {
       List<SeatingPlanVO> seatPlanList =
@@ -85,14 +93,14 @@ class AuthModelImpl extends AuthModel {
   Future<List<UserCardVO>?> createCard(
       int cardNumber, String cardHolder, String expirationDate, int cvc) {
     String token = "Bearer " + userDataDao.getUserToken().toString();
-    return _dataAgent.createCard(
+    return dataAgent.createCard(
         token, cardNumber, cardHolder, expirationDate, cvc);
   }
 
   @override
   Future<CheckoutVO?> checkout(CheckOutRequest request) {
     String token = "Bearer " + userDataDao.getUserToken().toString();
-    return _dataAgent.checkOut(token, request);
+    return dataAgent.checkOut(token, request);
   }
 
   /// from database
@@ -115,7 +123,7 @@ class AuthModelImpl extends AuthModel {
   /// reactive
   @override
   Future<List> loginWithEmail(String email, String password) {
-    return _dataAgent.loginWithEmail(email, password).then((value) async {
+    return dataAgent.loginWithEmail(email, password).then((value) async {
       UserDataVO user = value[2];
       user.userToken = value[3];
       userDataDao.saveUserData(user);
@@ -126,7 +134,7 @@ class AuthModelImpl extends AuthModel {
   @override
   Future<List> registerWithEmail(String name, String email, String phone,
       String password, String googleToken, String facebookToken) {
-    return _dataAgent
+    return dataAgent
         .registerWithEmail(
             name, email, phone, password, googleToken, facebookToken)
         .then((value) async {
@@ -139,7 +147,7 @@ class AuthModelImpl extends AuthModel {
 
   @override
   Future<List> loginWithFacebook(String accessToken) {
-    return _dataAgent.loginWithFacebook(accessToken).then((value) async {
+    return dataAgent.loginWithFacebook(accessToken).then((value) async {
       UserDataVO user = value[2];
       user.userToken = value[3];
       userDataDao.saveUserData(user);
@@ -149,7 +157,7 @@ class AuthModelImpl extends AuthModel {
 
   @override
   Future<List> loginWithGoogle(String accessToken) {
-    return _dataAgent.loginWithGoogle(accessToken).then((value) async {
+    return dataAgent.loginWithGoogle(accessToken).then((value) async {
       UserDataVO user = value[2];
       user.userToken = value[3];
       userDataDao.saveUserData(user);
@@ -160,7 +168,7 @@ class AuthModelImpl extends AuthModel {
   @override
   void getSnackList() {
     String token = "Bearer " + userDataDao.getUserToken().toString();
-    _dataAgent.getSnackList(token).then((value) {
+    dataAgent.getSnackList(token).then((value) {
       List<SnackVO> snackList = value!.map((snack) {
         snack.quantity = 0;
         return snack;
@@ -172,7 +180,7 @@ class AuthModelImpl extends AuthModel {
   @override
   void getPaymentMethodList() {
     String token = "Bearer " + userDataDao.getUserToken().toString();
-    _dataAgent.getPaymentMethodList(token).then((value) {
+    dataAgent.getPaymentMethodList(token).then((value) {
       paymentMethodDao.saveAllPaymentMethod(value!);
     });
   }
@@ -180,7 +188,7 @@ class AuthModelImpl extends AuthModel {
   @override
   void getProfile() {
     String token = "Bearer " + userDataDao.getUserToken().toString();
-    _dataAgent.getProfile(token).then((value) {
+    dataAgent.getProfile(token).then((value) {
       userCardDao.saveAllUserCards(value!.cards!);
     });
   }
@@ -188,7 +196,7 @@ class AuthModelImpl extends AuthModel {
   @override
   void getCinemaDayTimeSlot(String date) {
     String token = "Bearer " + userDataDao.getUserToken().toString();
-    _dataAgent.getCinemaDayTimeSlot(token, date).then((value) {
+    dataAgent.getCinemaDayTimeSlot(token, date).then((value) {
       List<CinemaVO> timeSlotList = value!.map((timeSlot) {
         timeSlot.timeslots?.map((time) {
           time.isSelected = false;

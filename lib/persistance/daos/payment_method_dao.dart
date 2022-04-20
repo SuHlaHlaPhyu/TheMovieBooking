@@ -1,37 +1,13 @@
-import 'package:hive/hive.dart';
 import 'package:movie_booking/data/vos/payment_vo.dart';
-import 'package:movie_booking/persistance/hive_constant.dart';
 
-class PaymentMethodDao {
-  static final PaymentMethodDao _singleton = PaymentMethodDao._internal();
+abstract class PaymentMethodDao {
 
-  factory PaymentMethodDao() {
-    return _singleton;
-  }
+  void saveAllPaymentMethod(List<PaymentVO> paymentMethodList);
 
-  PaymentMethodDao._internal();
-
-  void saveAllPaymentMethod(List<PaymentVO> paymentMethodList) async {
-    // ignore: prefer_for_elements_to_map_fromiterable
-    Map<int, PaymentVO> paymentMap = Map.fromIterable(paymentMethodList,
-        key: (payment) => payment.id, value: (payment) => payment);
-    await getPaymentMethodBox().putAll(paymentMap);
-  }
-
-  List<PaymentVO> getAllPaymentMethod() {
-    return getPaymentMethodBox().values.toList();
-  }
-
-  Box<PaymentVO> getPaymentMethodBox() {
-    return Hive.box<PaymentVO>(BOX_NAME_PAYMENT_VO);
-  }
+  List<PaymentVO> getAllPaymentMethod();
 
   /// reactive programming
-  Stream<void> getPaymentMethodEventStream() {
-    return getPaymentMethodBox().watch();
-  }
+  Stream<void> getPaymentMethodEventStream();
 
-  Stream<List<PaymentVO>> getAllPaymentMethodStream() {
-    return Stream.value(getAllPaymentMethod());
-  }
+  Stream<List<PaymentVO>> getAllPaymentMethodStream();
 }
