@@ -2,7 +2,7 @@ import 'package:movie_booking/data/vos/actor_vo.dart';
 
 abstract class ActorDao {
 
-  void saveAllMovies(List<ActorVO> actorList);
+  void saveAllActors(List<ActorVO> actorList);
 
   List<ActorVO> getAllActors();
 

@@ -13,7 +13,7 @@ class ActorDaoImpl extends ActorDao{
   ActorDaoImpl._internal();
 
   @override
-  void saveAllMovies(List<ActorVO> actorList) async {
+  void saveAllActors(List<ActorVO> actorList) async {
     // ignore: prefer_for_elements_to_map_fromiterable
     Map<int, ActorVO> actorMap = Map.fromIterable(actorList,
         key: (actor) => actor.id, value: (actor) => actor);

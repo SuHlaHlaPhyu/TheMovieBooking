@@ -25,11 +25,11 @@ class MovieModelImpl extends MovieModel {
   /// for testing purpose
   void setDaosAndDataAgents(
       MovieDao movieDaoTest,
-     // ActorDao actorDaoTest,
+      ActorDao actorDaoTest,
       MovieDataAgent movieDataAgentTest,
       ) {
     movieDao = movieDaoTest;
-    //actorDao = actorDaoTest;
+    actorDao = actorDaoTest;
     dataAgent = movieDataAgentTest;
   }
 
@@ -71,7 +71,7 @@ class MovieModelImpl extends MovieModel {
   void getCreditByMovie(int movieId) {
     dataAgent.getCreditByMovie(movieId).then((value) {
       List<ActorVO>? actorList = value.first;
-      actorDao.saveAllMovies(actorList!);
+      actorDao.saveAllActors(actorList!);
     });
   }
 

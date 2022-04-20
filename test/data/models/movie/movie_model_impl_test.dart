@@ -4,6 +4,7 @@ import 'package:movie_booking/data/vos/movie_vo.dart';
 
 import '../../../mock_data/mock_data.dart';
 import '../../../network/movie/movie_data_agent_impl_mock.dart';
+import '../../../persistance/actor_dao_impl_mock.dart';
 import '../../../persistance/movie_dao_impl_mock.dart';
 
 void main() {
@@ -13,6 +14,7 @@ void main() {
     setUp(() {
       movieModel.setDaosAndDataAgents(
         MovieDaoImplMock(),
+        ActorDaoImplMock(),
         MovieDataAgentImplMock(),
       );
     });
@@ -102,6 +104,14 @@ void main() {
         movieModel.getMovieDetailsFromDatabase(508947),
         emits(getMockMovieForTest().first),
       );
+    });
+
+    test("get Credit by movies Test", () {
+      expect(
+          movieModel.getCreditByMovieFromDatabase(1),
+          emits(
+            getMockActorForTest(),
+          ));
     });
   });
 }
