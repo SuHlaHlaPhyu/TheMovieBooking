@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/persistance/hive_constant.dart';
@@ -19,11 +20,11 @@ class CinemaListForHiveVO {
     return 'CinemaListForHiveVO{cinemaList: $cinemaList,}';
   }
 
-  // @override
-  // int get hashCode => cinemaList.hashCode;
+  @override
+  int get hashCode => cinemaList.hashCode;
 
-  // @override
-  // bool operator ==(Object other) {
-  //   return other is CinemaListForHiveVO && cinemaList == other.cinemaList;
-  // }
+  @override
+  bool operator ==(Object other) {
+    return other is CinemaListForHiveVO && const ListEquality().equals(cinemaList, other.cinemaList) ;
+  }
 }

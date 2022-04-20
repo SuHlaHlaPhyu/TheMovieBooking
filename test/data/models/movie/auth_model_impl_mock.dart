@@ -25,13 +25,12 @@ class AuthModelImplMock extends AuthModel{
 
   @override
   void getCinemaDayTimeSlot(String date) {
-    // TODO: implement getCinemaDayTimeSlot
+   getMockCinemaTimeslot();
   }
 
   @override
   Stream<List<CinemaVO>?> getCinemaDayTimeSlotFromDataBase(String date) {
-    // TODO: implement getCinemaDayTimeSlotFromDataBase
-    throw UnimplementedError();
+    return Stream.value(getMockCinemaTimeslot().cinemaList);
   }
 
   @override
@@ -59,7 +58,7 @@ class AuthModelImplMock extends AuthModel{
 
   @override
   void getProfile() {
-    getUserDataMockTest();
+    //getUserDataMockTest();
   }
 
   @override

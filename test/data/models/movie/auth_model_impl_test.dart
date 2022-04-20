@@ -3,6 +3,7 @@ import 'package:movie_booking/data/models/auth/auth_model_impl.dart';
 
 import '../../../mock_data/auth_mock_data.dart';
 import '../../../network/auth/auth_data_agent_impl_mock.dart';
+import '../../../persistance/cinema_day_timeslot_dao_impl_mock.dart';
 import '../../../persistance/user_data_dao_impl_mock.dart';
 
 void main() {
@@ -12,6 +13,7 @@ void main() {
     setUp(() {
       authModel.setDaosAndDataAgents(
         UserDataDaoImplMock(),
+        CinemaDayTimeslotImplMock(),
         AuthDataAgentImplMock(),
       );
     });
@@ -22,6 +24,10 @@ void main() {
           emits(
             getUserDataMockTest(),
           ));
+    });
+
+    test("cinema day times test", (){
+      expect(authModel.getCinemaDayTimeSlotFromDataBase("date"), emits(getMockCinemaTimeslot().cinemaList,));
     });
   });
 }

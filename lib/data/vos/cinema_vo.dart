@@ -33,4 +33,15 @@ class CinemaVO {
   String toString() {
     return 'CinemaVO{cinema_id: $cinemaId, cinema: $cinema, timeslots: $timeslots, dates:$dates}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CinemaVO &&
+          runtimeType == other.runtimeType &&
+          cinemaId == other.cinemaId &&
+          cinema == other.cinema;
+
+  @override
+  int get hashCode => cinemaId.hashCode ^ cinema.hashCode;
 }

@@ -25,8 +25,7 @@ class AuthDataAgentImplMock extends AuthDataAgent{
 
   @override
   Future<List<CinemaVO>?> getCinemaDayTimeSlot(String token, String date) {
-    // TODO: implement getCinemaDayTimeSlot
-    throw UnimplementedError();
+    return Future.value(getMockCinemaTimeslot().cinemaList);
   }
 
   @override
