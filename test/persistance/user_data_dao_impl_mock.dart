@@ -1,45 +1,42 @@
 import 'package:movie_booking/data/vos/user_data_vo.dart';
 import 'package:movie_booking/persistance/daos/user_data_dao.dart';
 
-class UserDataDaoImplMock extends UserDataDao{
+import '../mock_data/auth_mock_data.dart';
+
+class UserDataDaoImplMock extends UserDataDao {
+  Map<int?, UserDataVO> userDataInDatabaseMock = {};
   @override
   void clearUserData() {
-    // TODO: implement clearUserData
+    //
   }
 
   @override
   UserDataVO? getUserData() {
-    // TODO: implement getUserData
-    throw UnimplementedError();
+    return getUserDataMockTest();
   }
 
   @override
   Stream<void> getUserDataEventStream() {
-    // TODO: implement getUserDataEventStream
-    throw UnimplementedError();
+    return Stream<void>.value(null);
   }
 
   @override
   Stream<UserDataVO?> getUserDataStream() {
-    // TODO: implement getUserDataStream
-    throw UnimplementedError();
+    return Stream.value(getUserDataMockTest());
   }
 
   @override
   String? getUserToken() {
-    // TODO: implement getUserToken
-    throw UnimplementedError();
+    return "";
   }
 
   @override
   Stream<String?> getUserTokenStream() {
-    // TODO: implement getUserTokenStream
-    throw UnimplementedError();
+    return Stream.value("");
   }
 
   @override
   void saveUserData(UserDataVO userData) {
-    // TODO: implement saveUserData
+    userDataInDatabaseMock [userData.id] = userData;
   }
-  
 }

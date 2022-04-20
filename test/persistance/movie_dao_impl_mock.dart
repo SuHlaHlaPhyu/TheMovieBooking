@@ -1,7 +1,7 @@
 import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/persistance/daos/movie_dao.dart';
 
-import '../mock_data/mock_data.dart';
+import '../mock_data/movie_mock_data.dart';
 
 class MovieDaoImplMock extends MovieDao {
   Map<int?, MovieVO> moviesInDatabaseMock = {};

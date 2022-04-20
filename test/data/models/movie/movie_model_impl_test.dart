@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movie_booking/data/models/movie/movie_model_impl.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 
-import '../../../mock_data/mock_data.dart';
+import '../../../mock_data/movie_mock_data.dart';
 import '../../../network/movie/movie_data_agent_impl_mock.dart';
 import '../../../persistance/actor_dao_impl_mock.dart';
 import '../../../persistance/movie_dao_impl_mock.dart';

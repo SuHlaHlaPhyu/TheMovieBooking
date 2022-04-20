@@ -50,4 +50,15 @@ class UserDataVO {
   String toString() {
     return 'UserDataVO{id: $id, name: $name, email: $email, phone: $phone, total_expense: $totalExpense, profile_image: $profileImage, cards: $cards,}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UserDataVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode;
 }

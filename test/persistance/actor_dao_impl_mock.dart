@@ -1,7 +1,7 @@
 import 'package:movie_booking/data/vos/actor_vo.dart';
 import 'package:movie_booking/persistance/daos/actor_dao.dart';
 
-import '../mock_data/mock_data.dart';
+import '../mock_data/movie_mock_data.dart';
 
 class ActorDaoImplMock extends ActorDao{
 

@@ -1,6 +1,4 @@
-import 'package:hive/hive.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
-import 'package:movie_booking/persistance/hive_constant.dart';
 
 abstract class UserDataDao {
 
