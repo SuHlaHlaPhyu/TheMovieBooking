@@ -3,6 +3,7 @@ import 'package:movie_booking/data/models/auth/auth_model_impl.dart';
 
 import '../../../mock_data/auth_mock_data.dart';
 import '../../../network/auth/auth_data_agent_impl_mock.dart';
+import '../../../persistance/card_dao_impl_mock.dart';
 import '../../../persistance/cinema_day_timeslot_dao_impl_mock.dart';
 import '../../../persistance/payment_method_dao_impl_mock.dart';
 import '../../../persistance/seat_plan_dao_impl_mock.dart';
@@ -23,6 +24,7 @@ void main() {
             SeatPlanDaoImplMock(),
             SnackDaoImplMock(),
             PaymentMethodDaoImplMock(),
+            CardDaoImplMock(),
             AuthDataAgentImplMock(),
           );
         },
@@ -82,6 +84,10 @@ void main() {
             getMockPaymentMethods(),
           ),
         );
+      });
+
+      test("user card test ", (){
+        expect(authModel.getUserCardsFromDatabase(), emits(getMockUserCard(),),);
       });
     },
   );

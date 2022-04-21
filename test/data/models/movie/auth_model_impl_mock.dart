@@ -70,8 +70,7 @@ class AuthModelImplMock extends AuthModel{
 
   @override
   Stream<List<UserCardVO>?> getUserCardsFromDatabase() {
-    // TODO: implement getUserCardsFromDatabase
-    throw UnimplementedError();
+    return Stream.value(getMockUserCard());
   }
 
   @override

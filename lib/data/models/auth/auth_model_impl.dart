@@ -50,10 +50,10 @@ class AuthModelImpl extends AuthModel {
        SeatPlanDao seatPlanDaoTest,
       SnackDao snackDaoTest,
        PaymentMethodDao paymentMethodDaoTest,
-      // UserCardDao userCardDaoTest,
+       UserCardDao userCardDaoTest,
       AuthDataAgent authDataAgentTest
       ) {
-    // userCardDao = userCardDaoTest;
+     userCardDao = userCardDaoTest;
      timeSlotDao = timeSlotDaoTest;
      seatPlanDao = seatPlanDaoTest;
      snackDao = snackDaoTest;

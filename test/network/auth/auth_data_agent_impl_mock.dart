@@ -19,8 +19,7 @@ class AuthDataAgentImplMock extends AuthDataAgent{
 
   @override
   Future<List<UserCardVO>?> createCard(String token, int cardNumber, String cardHolder, String expirationDate, int cvc) {
-    // TODO: implement createCard
-    throw UnimplementedError();
+    return Future.value(getMockUserCard());
   }
 
   @override

@@ -38,6 +38,17 @@ class UserCardVO {
   String toString() {
     return 'UserCardVO{id: $id, card_holder: $cardHolder, card_number: $cardNumber, expiration_date: $expirationDate, card_type: $cardType,}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UserCardVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          cardHolder == other.cardHolder;
+
+  @override
+  int get hashCode => id.hashCode ^ cardHolder.hashCode;
 }
 
 /// difference between importing hive and importing hive_flutter

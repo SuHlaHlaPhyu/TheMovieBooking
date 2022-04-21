@@ -3,6 +3,7 @@ import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/data/vos/payment_vo.dart';
 import 'package:movie_booking/data/vos/seating_plan_vo.dart';
 import 'package:movie_booking/data/vos/snack_vo.dart';
+import 'package:movie_booking/data/vos/user_card_vo.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
 
 UserDataVO getUserDataMockTest() => UserDataVO(
@@ -26,7 +27,7 @@ CinemaListForHiveVO getMockCinemaTimeslot() {
   );
 }
 
-List<SeatingPlanVO> getMockSeatPlan(){
+List<SeatingPlanVO> getMockSeatPlan() {
   return [
     SeatingPlanVO(1, "text", 0, "A-4", "A", false),
     SeatingPlanVO(1, "text", 0, "B-1", "B", false),
@@ -37,16 +38,27 @@ List<SeatingPlanVO> getMockSeatPlan(){
 
 List<SnackVO> getMockSnack() {
   return [
-    SnackVO(1, "Popcorn", null, "Et dolores eaque officia aut.", null, null, null, null),
-    SnackVO(2, "Smoothies", null, "Et dolores eaque officia aut.", null, null, null, null),
-    SnackVO(3, "Carrots", null, "Et dolores eaque officia aut.", null, null, null, null),
+    SnackVO(1, "Popcorn", null, "Et dolores eaque officia aut.", null, null,
+        null, null),
+    SnackVO(2, "Smoothies", null, "Et dolores eaque officia aut.", null, null,
+        null, null),
+    SnackVO(3, "Carrots", null, "Et dolores eaque officia aut.", null, null,
+        null, null),
   ];
 }
 
-List<PaymentVO> getMockPaymentMethods (){
+List<PaymentVO> getMockPaymentMethods() {
   return [
     PaymentVO(1, "Credit card", null, null),
     PaymentVO(2, "Internet Banking (ATM card)", null, null),
     PaymentVO(3, "E-Wallet", null, null),
+  ];
+}
+
+List<UserCardVO> getMockUserCard() {
+  return [
+    UserCardVO(1, "Su", null, null, null),
+    UserCardVO(2, "Hla", null, null, null),
+    UserCardVO(3, "Phyu", null, null, null)
   ];
 }
