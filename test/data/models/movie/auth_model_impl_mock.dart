@@ -66,8 +66,7 @@ class AuthModelImplMock extends AuthModel{
 
   @override
   Stream<List<SnackVO>?> getSnackListFromDatabase() {
-    // TODO: implement getSnackListFromDatabase
-    throw UnimplementedError();
+    return Stream.value(getMockSnack());
   }
 
   @override

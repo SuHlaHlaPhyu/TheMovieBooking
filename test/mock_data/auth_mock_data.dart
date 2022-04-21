@@ -1,6 +1,7 @@
 import 'package:movie_booking/data/vos/cinema_list_for_hive_vo.dart';
 import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/data/vos/seating_plan_vo.dart';
+import 'package:movie_booking/data/vos/snack_vo.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
 
 UserDataVO getUserDataMockTest() => UserDataVO(
@@ -33,4 +34,10 @@ List<SeatingPlanVO> getMockSeatPlan(){
   ];
 }
 
-
+List<SnackVO> getMockSnack() {
+  return [
+    SnackVO(1, "Popcorn", null, "Et dolores eaque officia aut.", null, null, null, null),
+    SnackVO(2, "Smoothies", null, "Et dolores eaque officia aut.", null, null, null, null),
+    SnackVO(3, "Carrots", null, "Et dolores eaque officia aut.", null, null, null, null),
+  ];
+}

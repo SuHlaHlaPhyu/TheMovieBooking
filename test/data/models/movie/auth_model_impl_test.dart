@@ -5,6 +5,7 @@ import '../../../mock_data/auth_mock_data.dart';
 import '../../../network/auth/auth_data_agent_impl_mock.dart';
 import '../../../persistance/cinema_day_timeslot_dao_impl_mock.dart';
 import '../../../persistance/seat_plan_dao_impl_mock.dart';
+import '../../../persistance/snack_dao_impl_mock.dart';
 import '../../../persistance/user_data_dao_impl_mock.dart';
 
 void main() {
@@ -19,6 +20,7 @@ void main() {
             UserDataDaoImplMock(),
             CinemaDayTimeslotImplMock(),
             SeatPlanDaoImplMock(),
+            SnackDaoImplMock(),
             AuthDataAgentImplMock(),
           );
         },
@@ -61,6 +63,15 @@ void main() {
           );
         },
       );
+
+      test("snack list test", () {
+        expect(
+          authModel.getSnackListFromDatabase(),
+          emits(
+            getMockSnack(),
+          ),
+        );
+      });
     },
   );
 }

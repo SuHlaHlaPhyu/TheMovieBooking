@@ -46,8 +46,7 @@ class AuthDataAgentImplMock extends AuthDataAgent{
 
   @override
   Future<List<SnackVO>?> getSnackList(String token) {
-    // TODO: implement getSnackList
-    throw UnimplementedError();
+    return Future.value(getMockSnack());
   }
 
   @override
