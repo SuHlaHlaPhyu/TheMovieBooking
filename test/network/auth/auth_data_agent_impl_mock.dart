@@ -35,8 +35,7 @@ class AuthDataAgentImplMock extends AuthDataAgent{
 
   @override
   Future<List<PaymentVO>?> getPaymentMethodList(String token) {
-    // TODO: implement getPaymentMethodList
-    throw UnimplementedError();
+    return Future.value(getMockPaymentMethods());
   }
 
   @override

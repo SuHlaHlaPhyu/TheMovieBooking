@@ -37,4 +37,15 @@ class PaymentVO {
   String toString() {
     return 'SnackVO{id: $id, name: $name,description: $description,}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PaymentVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode;
 }

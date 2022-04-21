@@ -45,13 +45,12 @@ class AuthModelImplMock extends AuthModel{
 
   @override
   void getPaymentMethodList() {
-    // TODO: implement getPaymentMethodList
+    getMockPaymentMethods();
   }
 
   @override
   Stream<List<PaymentVO>?> getPaymentMethodListFromDatabase() {
-    // TODO: implement getPaymentMethodListFromDatabase
-    throw UnimplementedError();
+    return Stream.value(getMockPaymentMethods());
   }
 
   @override

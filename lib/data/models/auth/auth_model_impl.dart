@@ -49,7 +49,7 @@ class AuthModelImpl extends AuthModel {
        CinemaDayTimeslotDao timeSlotDaoTest,
        SeatPlanDao seatPlanDaoTest,
       SnackDao snackDaoTest,
-      // PaymentMethodDao paymentMethodDaoTest,
+       PaymentMethodDao paymentMethodDaoTest,
       // UserCardDao userCardDaoTest,
       AuthDataAgent authDataAgentTest
       ) {
@@ -57,7 +57,7 @@ class AuthModelImpl extends AuthModel {
      timeSlotDao = timeSlotDaoTest;
      seatPlanDao = seatPlanDaoTest;
      snackDao = snackDaoTest;
-    // paymentMethodDao = paymentMethodDaoTest;
+     paymentMethodDao = paymentMethodDaoTest;
     userDataDao = userDataDaoTest;
     dataAgent = authDataAgentTest;
   }

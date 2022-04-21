@@ -1,5 +1,6 @@
 import 'package:movie_booking/data/vos/cinema_list_for_hive_vo.dart';
 import 'package:movie_booking/data/vos/cinema_vo.dart';
+import 'package:movie_booking/data/vos/payment_vo.dart';
 import 'package:movie_booking/data/vos/seating_plan_vo.dart';
 import 'package:movie_booking/data/vos/snack_vo.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
@@ -39,5 +40,13 @@ List<SnackVO> getMockSnack() {
     SnackVO(1, "Popcorn", null, "Et dolores eaque officia aut.", null, null, null, null),
     SnackVO(2, "Smoothies", null, "Et dolores eaque officia aut.", null, null, null, null),
     SnackVO(3, "Carrots", null, "Et dolores eaque officia aut.", null, null, null, null),
+  ];
+}
+
+List<PaymentVO> getMockPaymentMethods (){
+  return [
+    PaymentVO(1, "Credit card", null, null),
+    PaymentVO(2, "Internet Banking (ATM card)", null, null),
+    PaymentVO(3, "E-Wallet", null, null),
   ];
 }
