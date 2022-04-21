@@ -47,7 +47,7 @@ class AuthModelImpl extends AuthModel {
   void setDaosAndDataAgents(
       UserDataDao userDataDaoTest,
        CinemaDayTimeslotDao timeSlotDaoTest,
-      // SeatPlanDao seatPlanDaoTest,
+       SeatPlanDao seatPlanDaoTest,
       // SnackDao snackDaoTest,
       // PaymentMethodDao paymentMethodDaoTest,
       // UserCardDao userCardDaoTest,
@@ -55,7 +55,7 @@ class AuthModelImpl extends AuthModel {
       ) {
     // userCardDao = userCardDaoTest;
      timeSlotDao = timeSlotDaoTest;
-    // seatPlanDao = seatPlanDaoTest;
+     seatPlanDao = seatPlanDaoTest;
     // snackDao = snackDaoTest;
     // paymentMethodDao = paymentMethodDaoTest;
     userDataDao = userDataDaoTest;

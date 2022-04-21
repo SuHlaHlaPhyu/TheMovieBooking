@@ -35,14 +35,12 @@ class AuthModelImplMock extends AuthModel{
 
   @override
   Future<List<List<SeatingPlanVO>>?> getCinemaSeatingPlan(int cinemaDaytimeslotId, String bookingDate) {
-    // TODO: implement getCinemaSeatingPlan
-    throw UnimplementedError();
+    return Future.value([getMockSeatPlan()]);
   }
 
   @override
   Future<List<SeatingPlanVO>?> getCinemaSeatingPlanFromDatabase() {
-    // TODO: implement getCinemaSeatingPlanFromDatabase
-    throw UnimplementedError();
+    return Future.value(getMockSeatPlan());
   }
 
   @override

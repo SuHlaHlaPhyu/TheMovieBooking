@@ -56,9 +56,23 @@ class SeatingPlanVO {
   }
 
   @override
-  int get hashCode => isSelected.hashCode;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SeatingPlanVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          type == other.type &&
+          seatName == other.seatName &&
+          symbol == other.symbol &&
+          price == other.price &&
+          isSelected == other.isSelected;
 
   @override
-  bool operator ==(Object other) =>
-      other is SeatingPlanVO && isSelected == other.isSelected;
+  int get hashCode =>
+      id.hashCode ^
+      type.hashCode ^
+      seatName.hashCode ^
+      symbol.hashCode ^
+      price.hashCode ^
+      isSelected.hashCode;
 }
