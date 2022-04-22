@@ -9,7 +9,11 @@ class WelcomeBloc extends ChangeNotifier {
 
   AuthModel authModel = AuthModelImpl();
 
-  WelcomeBloc() {
+  WelcomeBloc([AuthModel? authModelTest]) {
+    /// mock
+    if(authModelTest != null){
+      authModel = authModelTest;
+    }
     authModel.getUserDatafromDatabase().listen((user) {
       userData = user;
       notifyListeners();

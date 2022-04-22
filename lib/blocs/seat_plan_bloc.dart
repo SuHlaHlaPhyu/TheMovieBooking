@@ -18,7 +18,12 @@ class SeatPlanBloc extends ChangeNotifier {
   /// model
   AuthModel authModel = AuthModelImpl();
 
-  SeatPlanBloc(int timeslot, String date) {
+  SeatPlanBloc(int timeslot, String date , [AuthModel? authModelTest]) {
+    /// mock
+    if(authModelTest != null){
+      authModel = authModelTest;
+    }
+    ///
     authModel.getCinemaSeatingPlan(timeslot, date).then((user) {
       rawseatPlan = user;
       seatPlan = rawseatPlan!.expand((element) => element).toList();
@@ -58,35 +63,6 @@ class SeatPlanBloc extends ChangeNotifier {
     }
   }
 
-  // void selectedMovieSeatSection(int? index) {
-  //   if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
-  //     String name = seatPlan[index].seatName!;
-  //     row = seatPlan[index].symbol;
-  //     var newList = seatPlan.map((element) {
-  //       int i = seatPlan.indexOf(element);
-  //       if (i == index) {
-  //         if (seatPlan[i].isSelected == true) {
-  //           seatPlan[i].isSelected = false;
-  //           totalPrice -= seatPlan[i].price!;
-  //           totalTickets -= 1;
-  //         } else {
-  //           seatPlan[i].isSelected = true;
-  //           totalPrice += seatPlan[i].price!;
-  //           totalTickets += 1;
-  //         }
-  //       }
-  //       return element;
-  //     }).toList();
-  //     seatPlan = newList;
-  //     if (seatName.contains(name)) {
-  //       seatName.remove(name);
-  //     } else {
-  //       seatName.add(name);
-  //     }
-  //     notifyListeners();
-  //   }
-  // }
-
   void selectedMovieSeatSection(int? selectedIndex) {
     if (seatPlan[selectedIndex!].type == SEAT_TYPE_AVAILABLE) {
       String name = seatPlan[selectedIndex].seatName!;
@@ -114,100 +90,5 @@ class SeatPlanBloc extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-  // void selectedMovieSeatSection(int? index) {
-  //   if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
-  //     String name = seatPlan[index].seatName!;
-  //     row = seatPlan[index].symbol;
-  //     if (seatPlan[index].isSelected == true) {
-  //       seatPlan[index].isSelected = false;
-  //       totalPrice -= seatPlan[index].price!;
-  //       totalTickets -= 1;
-  //     } else {
-  //       seatPlan[index].isSelected = true;
-  //       totalPrice += seatPlan[index].price!;
-  //       totalTickets += 1;
-  //     }
-  //     if (seatName.contains(name)) {
-  //       seatName.remove(name);
-  //     } else {
-  //       seatName.add(name);
-  //     }
-  //     notifyListeners();
-  //   }
-  // }
-
-  // void selectedMovieSeatSection(int? index) {
-  //   if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
-  //     String name = seatPlan[index].seatName!;
-  //     row = seatPlan[index].symbol;
-  //     if (seatPlan[index].isSelected == true) {
-  //       seatPlan[index].isSelected = false;
-  //       totalPrice -= seatPlan[index].price!;
-  //       totalTickets -= 1;
-  //     } else {
-  //       seatPlan[index].isSelected = true;
-  //       totalPrice += seatPlan[index].price!;
-  //       totalTickets += 1;
-  //     }
-  //     if (seatName.contains(name)) {
-  //       seatName.remove(name);
-  //     } else {
-  //       seatName.add(name);
-  //     }
-  //     notifyListeners();
-  //   }
-  // }
 }
 
-
-
-  // /// index
-  // void selectedMovieSeatIndex(int? index) {
-  //   if (seatPlan[index!].type == SEAT_TYPE_AVAILABLE) {
-  //     String name = seatPlan[index].seatName!;
-  //     row = seatPlan[index].symbol;
-
-  //     /// new list
-  //     var newList = seatPlan.map((item) {
-  //       int i = seatPlan.indexOf(item);
-  //       if (i == index) {
-  //         if (seatPlan[i].isSelected == true) {
-  //           seatPlan[i].isSelected = false;
-  //           totalPrice -= seatPlan[i].price!;
-  //           totalTickets -= 1;
-  //         } else {
-  //           seatPlan[i].isSelected = true;
-  //           totalPrice += seatPlan[i].price!;
-  //           totalTickets += 1;
-  //         }
-  //       }
-  //       return item;
-  //     }).toList();
-
-  //     /// assign new list to origin
-  //     seatPlan = newList;
-
-  //     if (seatName.contains(name)) {
-  //       seatName.remove(name);
-  //     } else {
-  //       seatName.add(name);
-  //     }
-  //     notifyListeners();
-  //   }
-  // }
-
-
-      // List<SeatingPlanVO> newList = seatPlan.map((seat) {
-      //   if (seatPlan[index].isSelected == true) {
-      //     seatPlan[index].isSelected = false;
-      //     totalPrice -= seatPlan[index].price!;
-      //     totalTickets -= 1;
-      //   } else {
-      //     seatPlan[index].isSelected = true;
-      //     totalPrice += seatPlan[index].price!;
-      //     totalTickets += 1;
-      //   }
-      //   return seat;
-      // }).toList();
-      // seatPlan = newList;

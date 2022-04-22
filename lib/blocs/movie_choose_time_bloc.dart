@@ -18,7 +18,13 @@ class MovieChooseTimeBloc extends ChangeNotifier {
   /// model
   AuthModel authModel = AuthModelImpl();
 
-  MovieChooseTimeBloc() {
+  MovieChooseTimeBloc([AuthModel? authModelTest]) {
+    /// mock
+    if(authModelTest != null){
+      authModel = authModelTest;
+    }
+    
+    ///
     authModel.getCinemaDayTimeSlotFromDataBase(currentDate).listen((cinema) {
       cinemaList = cinema ?? [];
       selectedDate = currentDate;

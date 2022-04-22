@@ -65,4 +65,9 @@ class CheckoutVO {
       _$CheckoutVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$CheckoutVOToJson(this);
+
+  @override
+  String toString() {
+    return 'CheckoutVO{id: $id, bookingNo: $bookingNo, bookingDate: $bookingDate, row: $row, seat: $seat, totalSeat: $totalSeat, total: $total, movieId: $movieId, cinemaId: $cinemaId, username: $username, timeslot: $timeslot, snacks: $snacks, qrCode: $qrCode}';
+  }
 }

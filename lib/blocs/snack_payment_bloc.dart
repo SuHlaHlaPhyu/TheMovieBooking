@@ -19,7 +19,11 @@ class SnackPaymentBloc extends ChangeNotifier {
   /// model
   AuthModel authModel = AuthModelImpl();
 
-  SnackPaymentBloc() {
+  SnackPaymentBloc([AuthModel? authModelTest]) {
+    ///
+    if(authModelTest != null){
+      authModel = authModelTest;
+    }
     // snack list
     authModel.getSnackListFromDatabase().listen((snack) {
       snackList = snack!;

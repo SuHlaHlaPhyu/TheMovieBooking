@@ -16,7 +16,11 @@ class CardBloc extends ChangeNotifier {
   /// model
   AuthModel authModel = AuthModelImpl();
 
-  CardBloc() {
+  CardBloc([AuthModel? authModelTest]) {
+    /// mock
+    if(authModelTest != null){
+      authModel = authModelTest;
+    }
     authModel.getUserCardsFromDatabase().listen((card) {
       cardList = card?.reversed.toList();
       notifyListeners();
