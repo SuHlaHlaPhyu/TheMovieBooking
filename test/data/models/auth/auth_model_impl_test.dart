@@ -89,6 +89,7 @@ void main() {
       test("user card test ", (){
         expect(authModel.getUserCardsFromDatabase(), emits(getMockUserCard(),),);
       });
+
     },
   );
 }

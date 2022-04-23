@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movie_booking/blocs/home_bloc.dart';
 
-import '../data/models/movie/auth_model_impl_mock.dart';
+import '../data/models/auth/auth_model_impl_mock.dart';
 import '../data/models/movie/movie_model_impl_mock.dart';
 import '../mock_data/auth_mock_data.dart';
 import '../mock_data/movie_mock_data.dart';

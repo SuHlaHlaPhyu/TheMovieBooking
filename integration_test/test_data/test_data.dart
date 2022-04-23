@@ -29,10 +29,10 @@ const String TEST_DATA_TOTAL = "\$ 9.0";
 const String TEST_DATA_ADD_NEW_CARD = "Add new card";
 const String TEST_DATA_PAYMENT_CONFIRM = "Confirm";
 const String TEST_DATA_NEW_CARD_CONFIRM = "Confirm";
-const String TEST_DATA_CARD_NUM = "131131131";
-const String TEST_DATA_CARD_HOLDER = "JOHN";
-const String TEST_DATA_EXP_DATE = "02/2024";
-const String TEST_DATA_CARD_TYPE = "999";
+const String TEST_DATA_CARD_NUM = "911911911911";
+const String TEST_DATA_CARD_HOLDER = "SMITH";
+const String TEST_DATA_EXP_DATE = "07/2027";
+const String TEST_DATA_CARD_TYPE = "619";
 
 /// checkout
 const String TEST_DATA_CHECKOUT_TOTAL = "\$10";

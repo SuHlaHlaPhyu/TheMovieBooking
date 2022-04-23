@@ -49,20 +49,17 @@ class AuthDataAgentImplMock extends AuthDataAgent{
 
   @override
   Future<List> loginWithEmail(String email, String password) {
-    // TODO: implement loginWithEmail
-    throw UnimplementedError();
+    return Future.value([getUserDataMockTest()]);
   }
 
   @override
   Future<List> loginWithFacebook(String accessToken) {
-    // TODO: implement loginWithFacebook
-    throw UnimplementedError();
+    return Future.value([getUserDataMockTest()]);
   }
 
   @override
   Future<List> loginWithGoogle(String accessToken) {
-    // TODO: implement loginWithGoogle
-    throw UnimplementedError();
+    return Future.value([getUserDataMockTest()]);
   }
 
   @override
@@ -73,8 +70,7 @@ class AuthDataAgentImplMock extends AuthDataAgent{
 
   @override
   Future<List> registerWithEmail(String name, String email, String phone, String password, String googleToken, String facebookToken) {
-    // TODO: implement registerWithEmail
-    throw UnimplementedError();
+    return Future.value([getUserDataMockTest()]);
   }
   
 }
