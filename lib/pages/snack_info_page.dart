@@ -117,7 +117,7 @@ class SnackInfoPage extends StatelessWidget {
                 ),
               ),
               floatingActionButton: Padding(
-                key:const ValueKey("pay"),
+                key: const ValueKey("pay"),
                 padding: const EdgeInsets.only(
                   left: 30.0,
                 ),
@@ -223,7 +223,7 @@ class PaymentMethodView extends StatelessWidget {
               Icons.credit_card,
             ),
             title: GestureDetector(
-              onTap: (){
+              onTap: () {
                 selectedPayment(paymentList.indexOf(payment));
               },
               child: Text(
@@ -369,8 +369,9 @@ class SnackInfoView extends StatelessWidget {
                   onTap: () {
                     onRemoved();
                   },
-                  child: const Icon(
+                  child: Icon(
                     Icons.remove,
+                    key: ValueKey(item.name ?? ""),
                   ),
                 ),
                 const VerticalDivider(

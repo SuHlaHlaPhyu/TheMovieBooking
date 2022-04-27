@@ -5,7 +5,6 @@ import '../data/models/auth/auth_model.dart';
 import '../data/models/auth/auth_model_impl.dart';
 import '../data/vos/payment_vo.dart';
 import '../data/vos/snack_vo.dart';
-import '../network/snack_request.dart';
 import 'package:collection/collection.dart';
 
 class SnackPaymentBloc extends ChangeNotifier {
@@ -14,7 +13,6 @@ class SnackPaymentBloc extends ChangeNotifier {
   List<SnackVO> snackList = [];
   List<PaymentVO>? paymentList;
   double grandTotal = 0;
-  List<SnackRequest>? snackRequest;
 
   /// model
   AuthModel authModel = AuthModelImpl();
@@ -44,10 +42,10 @@ class SnackPaymentBloc extends ChangeNotifier {
   void addQuantity(SnackVO item) {
     var newList = snackList.map((element) {
       if (element == item) {
-        int q = element.quantity!;
+        int q = element.quantity ?? 0;
         q++;
         element.quantity = q;
-        grandTotal += element.price!;
+        grandTotal += element.price ?? 0;
       }
       return element;
     }).toList();
@@ -84,22 +82,4 @@ class SnackPaymentBloc extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-
-  // void subtractQuantity(int index) {
-  //   int q = snackList[index].quantity!;
-  //   if (q != 0) {
-  //     q--;
-  //     grandTotal -= snackList[index].price!;
-  //     snackList[index].quantity = q;
-  //   }
-  //   notifyListeners();
-  // }
-  // void addQuantity(int index) {
-  //   int q = snackList[index].quantity!;
-  //   q++;
-  //   snackList[index].quantity = q;
-  //   grandTotal += snackList[index].price!;
-  //   notifyListeners();
-  // }
 

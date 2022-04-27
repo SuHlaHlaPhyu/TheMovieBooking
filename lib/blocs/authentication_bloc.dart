@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -10,9 +8,7 @@ import '../data/vos/user_data_vo.dart';
 
 class AuthenticationBloc extends ChangeNotifier {
   /// state
-  String? message;
   UserDataVO? userData;
-  String? token;
   int? code;
   String googleToken = "";
   String facebookToken = "";

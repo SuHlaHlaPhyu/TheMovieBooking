@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import '../data/models/auth/auth_model.dart';
 import '../data/models/auth/auth_model_impl.dart';
 import '../data/vos/cinema_vo.dart';
-import 'package:collection/collection.dart';
 
 class MovieChooseTimeBloc extends ChangeNotifier {
   /// state
@@ -60,40 +59,6 @@ class MovieChooseTimeBloc extends ChangeNotifier {
     notifyListeners();
 
     ///
-
-    // // set False to all
-    // cinemaList.map((cinema) {
-    //   cinema.timeslots?.map((time) {
-    //     time.isSelected = false;
-    //   }).toList();
-    // }).toList();
-    // // set True to selected Time for color change
-    // cinemaList[cinemaIndex].timeslots?[selectedTime!].isSelected = true;
-
-    // var newList = cinemaList.map(
-    //   (cinema) {
-    //     cinema.timeslots?.map((time) {
-    //       time.isSelected = false;
-    //       return time;
-    //     }).toList();
-    //     return cinema;
-    //   },
-    // ).mapIndexed(
-    //   (index, element) {
-    //     element.timeslots?[index].isSelected = true;
-    //   },
-    // ).toList();
-
-    // List<CinemaVO> newList = cinemaList.map((cinema) {
-    //   cinema.timeslots?.map((time) {
-    //     time.isSelected = false;
-    //     return time;
-    //   }).mapIndexed((index, element) {
-    //     element.isSelected = true;
-    //   }).toList();
-    //   return cinema;
-    // }).toList();
-    // cinemaList = newList;
     notifyListeners();
   }
 }

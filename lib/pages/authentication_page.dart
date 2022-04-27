@@ -56,6 +56,7 @@ class _AuthenticationPageState extends State<AuthenticationPage>
           selector: (BuildContext context, bloc) => bloc.userData,
           builder: (BuildContext context, value, Widget? child) {
             return Scaffold(
+              key: const ValueKey("home"),
               backgroundColor: Colors.white,
               body: Padding(
                 padding: const EdgeInsets.only(

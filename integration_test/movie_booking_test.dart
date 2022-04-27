@@ -75,17 +75,20 @@ void main() async {
     final emailFinder = find.byKey(const ValueKey('input.email'));
     final passwordFinder = find.byKey(const ValueKey('input.password'));
     final buttonFinder = find.byKey(const ValueKey('confirm'));
+    final keyFinder = find.byKey(const ValueKey('home'));
     await tester.pumpAndSettle(const Duration(seconds: 5));
 
     /// enter text and login
     await tester.enterText(emailFinder, TEST_DATA_EMAIL);
     await tester.enterText(passwordFinder, TEST_DATA_PASSWORD);
     await tester.pumpAndSettle(const Duration(seconds: 5));
+    // await tester.tap(keyFinder);
+    // await tester.pumpAndSettle(const Duration(seconds: 5));
     await tester.tap(buttonFinder);
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await tester.pumpAndSettle(const Duration(seconds: 8));
 
     /// home page
-    expect(find.text(TEST_DATA_COMING_SOON), findsOneWidget);
+   // expect(find.text(TEST_DATA_COMING_SOON), findsOneWidget);
     await tester.tap(find.text(TEST_DATA_NOW_SHOWING));
     await tester.pumpAndSettle(const Duration(seconds: 5));
 
@@ -117,12 +120,25 @@ void main() async {
     final snackOneFinder = find.byKey(const ValueKey(1));
     final snackTwoFinder = find.byKey(const ValueKey(2));
     final snackThreeFinder = find.byKey(const ValueKey(3));
+    final snackTwoMinusFinder = find.byKey(const ValueKey('Smoothies'));
     final buttonSnackFinder = find.byKey(const ValueKey('pay'));
     await tester.pumpAndSettle(const Duration(seconds: 5));
+
+    /// add
     await tester.tap(snackOneFinder);
+
+    /// add + add
     await tester.tap(snackTwoFinder);
+    await tester.tap(snackTwoFinder);
+
+    /// add
     await tester.tap(snackThreeFinder);
     await tester.pumpAndSettle(const Duration(seconds: 5));
+
+    /// subtract quantity
+    await tester.tap(snackTwoMinusFinder);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+
     expect(find.text(TEST_DATA_SUBTOTAL), findsOneWidget);
     await tester.tap(find.text(TEST_DATA_PAYMENT));
     await tester.pumpAndSettle(const Duration(seconds: 5));

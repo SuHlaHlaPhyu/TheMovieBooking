@@ -3,6 +3,7 @@ import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/data/vos/payment_vo.dart';
 import 'package:movie_booking/data/vos/seating_plan_vo.dart';
 import 'package:movie_booking/data/vos/snack_vo.dart';
+import 'package:movie_booking/data/vos/timeslot_vo.dart';
 import 'package:movie_booking/data/vos/user_card_vo.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
 
@@ -20,7 +21,7 @@ UserDataVO getUserDataMockTest() => UserDataVO(
 CinemaListForHiveVO getMockCinemaTimeslot() {
   return CinemaListForHiveVO(
     [
-      CinemaVO(1, "Cinema I", [], []),
+      CinemaVO(1, "Cinema I", [TimeslotVO(1, "10:00 AM", true)], ["22-4-2022"]),
       CinemaVO(2, "Cinema II", [], []),
       CinemaVO(3, "Cinema III", [], [])
     ],
@@ -29,20 +30,20 @@ CinemaListForHiveVO getMockCinemaTimeslot() {
 
 List<SeatingPlanVO> getMockSeatPlan() {
   return [
-    SeatingPlanVO(1, "text", 0, "A-4", "A", false),
-    SeatingPlanVO(1, "text", 0, "B-1", "B", false),
-    SeatingPlanVO(1, "text", 0, "C-2", "C", false),
-    SeatingPlanVO(1, "text", 0, "D-1", "D", false),
+    SeatingPlanVO(1, "available", 2, "A-4", "A", false),
+    SeatingPlanVO(1, "available", 2, "B-1", "B", false),
+    SeatingPlanVO(1, "available", 2, "C-2", "C", false),
+    SeatingPlanVO(1, "available", 2, "D-1", "D", false),
   ];
 }
 
 List<SnackVO> getMockSnack() {
   return [
-    SnackVO(1, "Popcorn", null, "Et dolores eaque officia aut.", null, null,
+    SnackVO(1, "Popcorn", 2, "Et dolores eaque officia aut.", null, 1,
         null, null),
-    SnackVO(2, "Smoothies", null, "Et dolores eaque officia aut.", null, null,
+    SnackVO(2, "Smoothies", 3, "Et dolores eaque officia aut.", null, 1,
         null, null),
-    SnackVO(3, "Carrots", null, "Et dolores eaque officia aut.", null, null,
+    SnackVO(3, "Carrots", 4, "Et dolores eaque officia aut.", null, 1,
         null, null),
   ];
 }

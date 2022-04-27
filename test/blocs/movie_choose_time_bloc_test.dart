@@ -15,5 +15,23 @@ void main(){
     test("cinema list test", (){
       expect(movieChooseTimeBloc?.cinemaList.contains(getMockCinemaTimeslot().cinemaList?.first), true);
     });
+
+    test("selected date", () async{
+      movieChooseTimeBloc?.getTimeSlotbyDate("22-4-2022");
+      await Future.value(const Duration(seconds: 5));
+      expect(movieChooseTimeBloc?.selectedDate, "22-4-2022");
+    });
+
+    test("selected cinema", () async{
+      movieChooseTimeBloc?.chooseItemGrid(0,0);
+      await Future.value(const Duration(seconds: 5));
+      expect(movieChooseTimeBloc?.selectedCinema, "Cinema I");
+    });
+
+    test("selected movie time", () async{
+      movieChooseTimeBloc?.chooseItemGrid(0,0);
+      await Future.value(const Duration(seconds: 5));
+      expect(movieChooseTimeBloc?.selectedMovieTime, "10:00 AM");
+    });
   });
 }
