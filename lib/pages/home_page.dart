@@ -22,24 +22,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<MenuItem> menuItem = [
-    MenuItem(
+  final List<MenuItems> menuItem = [
+    MenuItems(
       'Promotion Code',
       Icons.code,
     ),
-    MenuItem(
+    MenuItems(
       'Select a language',
       Icons.language_sharp,
     ),
-    MenuItem(
+    MenuItems(
       'Term of services',
       Icons.list,
     ),
-    MenuItem(
+    MenuItems(
       'Help',
       Icons.help,
     ),
-    MenuItem(
+    MenuItems(
       'Rate us',
       Icons.star_rate,
     ),
@@ -188,7 +188,7 @@ class DrawerView extends StatelessWidget {
     required this.onTap,
   }) : super(key: key);
 
-  final List<MenuItem> menuItem;
+  final List<MenuItems> menuItem;
   final UserDataVO? userDataVO;
   final Function onTap;
 
