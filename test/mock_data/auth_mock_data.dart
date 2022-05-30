@@ -58,8 +58,8 @@ List<PaymentVO> getMockPaymentMethods() {
 
 List<UserCardVO> getMockUserCard() {
   return [
-    UserCardVO(1, "Su", null, null, null),
-    UserCardVO(2, "Hla", null, null, null),
-    UserCardVO(3, "Phyu", null, null, null)
+    UserCardVO(1, "Su", null, null, null,false),
+    UserCardVO(2, "Hla", null, null, null,false),
+    UserCardVO(3, "Phyu", null, null, null,false)
   ];
 }

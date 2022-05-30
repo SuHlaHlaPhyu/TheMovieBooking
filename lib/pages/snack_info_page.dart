@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_booking/blocs/snack_payment_bloc.dart';
+import 'package:movie_booking/configs/config_values.dart';
+import 'package:movie_booking/configs/environment_config.dart';
 import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/data/vos/payment_vo.dart';
@@ -138,7 +140,7 @@ class SnackInfoPage extends StatelessWidget {
                                 "Pay \$ $grandTotal",
                                 btnColor: selectPayment == ""
                                     ? Colors.grey
-                                    : PRIMARY_COLOR,
+                                    : THEME_COLOR[EnvironmentConfig.CONFIG_THEME_COLOR],
                               );
                             });
                       }),
@@ -230,14 +232,14 @@ class PaymentMethodView extends StatelessWidget {
                 payment.name ?? "",
                 style: TextStyle(
                   color:
-                      payment.isSelected == true ? PRIMARY_COLOR : Colors.black,
+                      payment.isSelected == true ? BUTTON_COLOR[EnvironmentConfig.CONFIG_BUTTON_COLOR] : Colors.black,
                 ),
               ),
             ),
             subtitle: Text(
               payment.description ?? "",
               style: TextStyle(
-                color: payment.isSelected == true ? PRIMARY_COLOR : Colors.grey,
+                color: payment.isSelected == true ? BUTTON_COLOR[EnvironmentConfig.CONFIG_BUTTON_COLOR] : Colors.grey,
               ),
             ),
           ),

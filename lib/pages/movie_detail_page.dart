@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:movie_booking/blocs/movie_detail_bloc.dart';
+import 'package:movie_booking/configs/config_values.dart';
+import 'package:movie_booking/configs/environment_config.dart';
 import 'package:movie_booking/data/vos/actor_vo.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/network/api_constants.dart';
 import 'package:movie_booking/pages/movie_choose_time_page.dart';
 import 'package:movie_booking/resources/dimension.dart';
 import 'package:movie_booking/resources/string.dart';
+import 'package:movie_booking/view_items/cast_horizontal_list_view.dart';
 import 'package:movie_booking/widgets/app_text_button.dart';
 import 'package:movie_booking/widgets/title_text.dart';
 import 'package:provider/provider.dart';
+
+import '../view_items/cast_view.dart';
 
 class MovieDetailPage extends StatelessWidget {
   final int movieId;
@@ -85,15 +90,20 @@ class MovieDetailPage extends StatelessWidget {
                                       height: MARGIN_MEDIUM_3,
                                     ),
                                     Selector<MovieDetailBloc, List<ActorVO>?>(
-                                        selector:
-                                            (BuildContext context, bloc) =>
-                                                bloc.casts,
-                                        builder: (BuildContext context, casts,
-                                            Widget? child) {
-                                          return CastView(
-                                            castList: casts,
-                                          );
-                                        }),
+                                      selector: (BuildContext context, bloc) =>
+                                          bloc.casts,
+                                      builder: (BuildContext context, casts,
+                                          Widget? child) {
+                                        return CAST_VIEW[EnvironmentConfig
+                                                    .CONFIG_CAST_VIEW] ==
+                                                "Horizontal list"
+                                            ? CastHorizontalListView(
+                                                castList: casts)
+                                            : CastView(
+                                                castList: casts,
+                                              );
+                                      },
+                                    ),
                                     const SizedBox(
                                       height: MARGIN_XXLARGE,
                                     ),
@@ -117,6 +127,7 @@ class MovieDetailPage extends StatelessWidget {
                           },
                           child: AppTextButton(
                             TICKETS_BUTTON_TEXT,
+                            btnColor: THEME_COLOR[EnvironmentConfig.CONFIG_THEME_COLOR],
                           ),
                         ),
                       ),
@@ -139,59 +150,6 @@ void _navigateToChooseTimePage(BuildContext context, MovieVO? movie) {
       ),
     ),
   );
-}
-
-class CastView extends StatelessWidget {
-  const CastView({
-    Key? key,
-    required this.castList,
-  }) : super(key: key);
-
-  final List<ActorVO>? castList;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TitleText(CAST_BUTTON_TEXT),
-        const SizedBox(
-          height: MARGIN_MEDIUM,
-        ),
-        Wrap(
-          children: [
-            ...castList
-                ?.map(
-                  (cast) => CastAvatarView(cast),
-                )
-                .toList() ?? [],
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class CastAvatarView extends StatelessWidget {
-  final ActorVO cast;
-  CastAvatarView(this.cast);
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      children: const [
-        CircleAvatar(
-          maxRadius: MARGIN_XLARGE,
-          minRadius: MARGIN_XLARGE,
-          backgroundImage: NetworkImage(
-              // "$IMAGE_BASE_URL${cast.profilePath}",
-              "https://1409791524.rsc.cdn77.org/data/images/full/606683/blackpink-jisoo-mesmerizes-fans-in-new-instagram-photos.jpeg?w=900"),
-        ),
-        SizedBox(
-          width: MARGIN_MEDIUM,
-        )
-      ],
-    );
-  }
 }
 
 class GenreView extends StatelessWidget {

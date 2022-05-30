@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_booking/blocs/welcome_bloc.dart';
+import 'package:movie_booking/configs/environment_config.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
 import 'package:movie_booking/pages/home_page.dart';
 import 'package:movie_booking/resources/color.dart';
@@ -10,6 +11,7 @@ import 'package:movie_booking/widgets/sub_text.dart';
 import 'package:movie_booking/widgets/title_text.dart';
 import 'package:provider/provider.dart';
 
+import '../configs/config_values.dart';
 import 'authentication_page.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -20,7 +22,7 @@ class WelcomePage extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => WelcomeBloc(),
       child: Scaffold(
-        backgroundColor: PRIMARY_COLOR,
+        backgroundColor: THEME_COLOR[EnvironmentConfig.CONFIG_THEME_COLOR],
         body: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: MARGIN_MEDIUM_2,
@@ -48,7 +50,7 @@ class WelcomePage extends StatelessWidget {
                 height: MARGIN_MEDIUM_2,
               ),
               SubText(
-                WELCOME_SCREEN_SUB_TEXT,
+                "Welcome to ${APP_TITLE[EnvironmentConfig.CONFIG_APP_TITLE]} App.",
                 textColor: Colors.white,
               ),
               const Spacer(),
@@ -66,6 +68,7 @@ class WelcomePage extends StatelessWidget {
                       child: AppTextButton(
                         WELCOME_SCREEN_BUTTON_TEXT,
                         isBorder: true,
+                        btnColor: THEME_COLOR[EnvironmentConfig.CONFIG_THEME_COLOR],
                       ),
                     );
                   }),

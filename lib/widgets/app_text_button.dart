@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie_booking/configs/config_values.dart';
+import 'package:movie_booking/configs/environment_config.dart';
 import 'package:movie_booking/resources/color.dart';
 
 import 'sub_text.dart';

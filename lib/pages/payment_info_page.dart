@@ -1,6 +1,7 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_booking/blocs/card_bloc.dart';
+import 'package:movie_booking/configs/config_values.dart';
+import 'package:movie_booking/configs/environment_config.dart';
 import 'package:movie_booking/data/vos/checkout_vo.dart';
 import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
@@ -12,6 +13,8 @@ import 'package:movie_booking/resources/dimension.dart';
 import 'package:movie_booking/widgets/app_text_button.dart';
 import 'package:provider/provider.dart';
 
+import '../view_items/card_carousel_slider_section_view.dart';
+import '../view_items/card_horizontal_list_view.dart';
 import 'add_new_card_page.dart';
 import 'ticket_info_page.dart';
 
@@ -80,24 +83,30 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
                 height: MARGIN_MEDIUM_3,
               ),
               Selector<CardBloc, List<UserCardVO>?>(
-                  selector: (BuildContext context, bloc) => bloc.cardList,
-                  builder: (BuildContext context, cardList, Widget? child) {
-                    return CarouselSlider(
-                      options: CarouselOptions(
-                        onPageChanged: (index, reason) {
-                          cardId = cardList?[index].id ?? 682;
-                        },
-                        height: BARCODE_WIDTH,
-                        aspectRatio: 2.0,
-                        enlargeCenterPage: true,
-                      ),
-                      items: cardList
-                          ?.map(
-                            (card) => PaymentCardView(card),
-                          )
-                          .toList() ?? [],
-                    );
-                  }),
+                selector: (BuildContext context, bloc) => bloc.cardList,
+                builder: (BuildContext context, cardList, Widget? child) {
+                  return USER_CARD[EnvironmentConfig.CONFIG_USER_CARD] ==
+                          "Horizontal list"
+                      ? CardHorizontalListView(
+                          onTap: (index) {
+                            cardId = cardList?[index ?? 0].id ?? 682;
+                            setState(() {
+                              cardList
+                                  ?.map((e) => e.isSelected = false)
+                                  .toList();
+                              cardList?[index ?? 0].isSelected = true;
+                            });
+                          },
+                          cardList: cardList ?? [],
+                        )
+                      : CardCarouselSliderSectionView(
+                          onTap: (index) {
+                            cardId = cardList?[index ?? 0].id ?? 682;
+                          },
+                          cardList: cardList ?? [],
+                        );
+                },
+              ),
               const SizedBox(
                 height: MARGIN_MEDIUM_3,
               ),
@@ -110,24 +119,25 @@ class _PaymentInfoPageState extends State<PaymentInfoPage> {
           ),
         ),
         floatingActionButton: Selector<CardBloc, CheckoutVO?>(
-            selector: (BuildContext context, bloc) => bloc.checkoutVO,
-            builder: (BuildContext context, value, Widget? child) {
-              return Padding(
-                padding: const EdgeInsets.only(
-                  left: MARGIN_XLARGE,
+          selector: (BuildContext context, bloc) => bloc.checkoutVO,
+          builder: (BuildContext context, value, Widget? child) {
+            return Padding(
+              padding: const EdgeInsets.only(
+                left: MARGIN_XLARGE,
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  CardBloc bloc = Provider.of<CardBloc>(context, listen: false);
+                  goToNextPage(context, bloc);
+                },
+                child: AppTextButton(
+                  "Confirm",
+                  btnColor: THEME_COLOR[EnvironmentConfig.CONFIG_THEME_COLOR],
                 ),
-                child: GestureDetector(
-                  onTap: () {
-                    CardBloc bloc =
-                        Provider.of<CardBloc>(context, listen: false);
-                    goToNextPage(context, bloc);
-                  },
-                  child: AppTextButton(
-                    "Confirm",
-                  ),
-                ),
-              );
-            }),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -199,116 +209,6 @@ class AddNewCardView extends StatelessWidget {
           ),
         )
       ],
-    );
-  }
-}
-
-class PaymentCardView extends StatelessWidget {
-  final UserCardVO cardInfo;
-  PaymentCardView(this.cardInfo);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(
-        MARGIN_MEDIUM_3,
-      ),
-      height: BARCODE_WIDTH,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            PAYMENT_CARD_COLOR,
-            PRIMARY_COLOR,
-          ],
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-        ),
-        borderRadius: BorderRadius.circular(
-          MARGIN_MEDIUM,
-        ),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                cardInfo.cardType ?? "",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: TEXT_HEADING_1X,
-                ),
-              ),
-              const Icon(
-                Icons.more_horiz,
-                color: Colors.white,
-              ),
-            ],
-          ),
-          const Spacer(),
-          Expanded(
-            child: Text(
-              cardInfo.cardNumber ?? "",
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: TEXT_REGULAR_3X,
-              ),
-            ),
-          ),
-          const Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CardTitleText('CARD HOLDER'),
-                  CardSubText(cardInfo.cardHolder ?? ""),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CardTitleText('EXPIRES'),
-                  CardSubText(cardInfo.expirationDate ?? ""),
-                ],
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class CardSubText extends StatelessWidget {
-  final String text;
-  CardSubText(this.text);
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: TEXT_REGULAR_2X,
-      ),
-    );
-  }
-}
-
-class CardTitleText extends StatelessWidget {
-  final String text;
-  CardTitleText(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: Colors.grey,
-        fontSize: TEXT_REGULAR_2X,
-      ),
     );
   }
 }

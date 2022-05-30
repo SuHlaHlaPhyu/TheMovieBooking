@@ -1,6 +1,7 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_booking/blocs/seat_plan_bloc.dart';
+import 'package:movie_booking/configs/config_values.dart';
 import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/data/vos/seating_plan_vo.dart';
@@ -10,6 +11,8 @@ import 'package:movie_booking/resources/dimension.dart';
 import 'package:movie_booking/widgets/app_text_button.dart';
 import 'package:movie_booking/widgets/ticket_info_row.dart';
 import 'package:provider/provider.dart';
+
+import '../configs/environment_config.dart';
 
 class SeatPlanPage extends StatelessWidget {
   MovieVO? movieName;
@@ -117,19 +120,21 @@ class SeatPlanPage extends StatelessWidget {
                 goToNextPage(context, bloc);
               },
               child: Selector<SeatPlanBloc, double>(
-                  selector: (BuildContext context, bloc) => bloc.totalPrice,
-                  builder: (BuildContext context, value, Widget? child) {
-                    return Selector<SeatPlanBloc, List<String>>(
-                        selector: (BuildContext context, bloc) => bloc.seatName,
-                        builder: (BuildContext context, value, Widget? child) {
-                          return AppTextButton(
-                            "Buy Ticket for \$ ${bloc.totalPrice}",
-                            btnColor: bloc.seatName.isEmpty
-                                ? Colors.grey
-                                : PRIMARY_COLOR,
-                          );
-                        });
-                  }),
+                selector: (BuildContext context, bloc) => bloc.totalPrice,
+                builder: (BuildContext context, value, Widget? child) {
+                  return Selector<SeatPlanBloc, List<String>>(
+                    selector: (BuildContext context, bloc) => bloc.seatName,
+                    builder: (BuildContext context, value, Widget? child) {
+                      return AppTextButton(
+                        "Buy Ticket for \$ ${bloc.totalPrice}",
+                        btnColor: bloc.seatName.isEmpty
+                            ? Colors.grey
+                            : THEME_COLOR[EnvironmentConfig.CONFIG_THEME_COLOR],
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           );
         }),
@@ -235,7 +240,7 @@ class MovieSeatGlosserySectionView extends StatelessWidget {
             flex: 1,
             child: MovieSeatGlosseryView(
               'Your Selection',
-              PRIMARY_COLOR,
+              BUTTON_COLOR[EnvironmentConfig.CONFIG_BUTTON_COLOR],
             ),
           ),
         ],
@@ -328,7 +333,7 @@ class MovieSeatItemView extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: movieSeats.isSelected == true
-              ? PRIMARY_COLOR
+              ? BUTTON_COLOR[EnvironmentConfig.CONFIG_BUTTON_COLOR]
               : _getSeatColor(movieSeats),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(

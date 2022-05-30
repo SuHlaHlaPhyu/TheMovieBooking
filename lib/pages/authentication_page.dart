@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_booking/blocs/authentication_bloc.dart';
+import 'package:movie_booking/configs/environment_config.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
 import 'package:movie_booking/resources/color.dart';
 import 'package:movie_booking/resources/dimension.dart';
@@ -10,6 +11,7 @@ import 'package:movie_booking/widgets/sub_text.dart';
 import 'package:movie_booking/widgets/title_text.dart';
 import 'package:provider/provider.dart';
 
+import '../configs/config_values.dart';
 import 'home_page.dart';
 
 class AuthenticationPage extends StatefulWidget {
@@ -438,6 +440,7 @@ class AuthButtonView extends StatelessWidget {
           onTap: () => onTap(),
           child: AppTextButton(
             CONFIRM_BUTTON_TEXT,
+            btnColor: THEME_COLOR[EnvironmentConfig.CONFIG_THEME_COLOR],
           ),
         ),
       ],

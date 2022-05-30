@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:movie_booking/blocs/home_bloc.dart';
+import 'package:movie_booking/configs/config_values.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
 import 'package:movie_booking/listItems/menu_item.dart';
-import 'package:movie_booking/network/api_constants.dart';
+import 'package:movie_booking/view_items/coming_soon_tabbar_section_view.dart';
+import 'package:movie_booking/view_items/now_showing_tabbar_section_view.dart';
+import 'package:movie_booking/view_items/tabbar_section_view.dart';
 import 'package:movie_booking/pages/welcome_page.dart';
 import 'package:movie_booking/resources/color.dart';
 import 'package:movie_booking/resources/dimension.dart';
 import 'package:movie_booking/resources/string.dart';
-import 'package:movie_booking/widgets/sub_text.dart';
-import 'package:movie_booking/widgets/title_text.dart';
 import 'package:provider/provider.dart';
 
+import '../configs/environment_config.dart';
+import '../view_items/coming_soon_section_view.dart';
+import '../view_items/drawer_view.dart';
+import '../view_items/now_showing_section_view.dart';
+import '../view_items/profile_view.dart';
 import 'movie_detail_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,7 +27,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   final List<MenuItems> menuItem = [
     MenuItems(
       'Promotion Code',
@@ -44,97 +51,76 @@ class _HomePageState extends State<HomePage> {
       Icons.star_rate,
     ),
   ];
+
+  TabController? _tabController;
+
+  @override
+  void initState() {
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController?.addListener(_handleTabIndex);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _tabController?.removeListener(_handleTabIndex);
+    _tabController!.dispose();
+  }
+
+  void _handleTabIndex() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => HomeBloc(),
       child: Selector<HomeBloc, UserDataVO?>(
-          selector: (BuildContext context, bloc) => bloc.userData,
-          builder: (BuildContext context, userData, Widget? child) {
-            return Scaffold(
+        selector: (BuildContext context, bloc) => bloc.userData,
+        builder: (BuildContext context, userData, Widget? child) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            drawer: DrawerView(
+              menuItem: menuItem,
+              userDataVO: userData,
+              onTap: () {
+                HomeBloc bloc = Provider.of(context, listen: false);
+                showLogoutConfirm(bloc);
+              },
+            ),
+            appBar: AppBar(
               backgroundColor: Colors.white,
-              drawer: DrawerView(
-                menuItem: menuItem,
-                userDataVO: userData,
-                onTap: () {
-                  HomeBloc bloc = Provider.of(context, listen: false);
-                  showLogoutConfirm(bloc);
-                },
+              iconTheme: const IconThemeData(
+                color: Colors.black,
               ),
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                iconTheme: const IconThemeData(
-                  color: Colors.black,
-                ),
-                elevation: 0.0,
-                actions: const [
-                  Padding(
-                    padding: EdgeInsets.only(
-                      right: MARGIN_MEDIUM_2,
-                    ),
-                    child: Icon(
-                      Icons.search,
-                      color: Colors.black,
-                      size: MARGIN_XLARGE,
-                    ),
+              elevation: 0.0,
+              actions: const [
+                Padding(
+                  padding: EdgeInsets.only(
+                    right: MARGIN_MEDIUM_2,
                   ),
-                ],
-              ),
-              body: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: MARGIN_MEDIUM,
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ProfileView(
-                        name: userData?.name ?? "",
-                      ),
-                      const SizedBox(
-                        height: MARGIN_MEDIUM_3,
-                      ),
-                      Selector<HomeBloc, List<MovieVO>?>(
-                        selector: (BuildContext context, bloc) =>
-                            bloc.nowShowingMovies,
-                        builder: (BuildContext context, nowShowingMovies,
-                            Widget? child) {
-                          return NowShowingSectionView(
-                            NOW_SHOWING_MOVIE_LIST_TEXT,
-                            movieList: nowShowingMovies,
-                            onTapMovie: (movieId) =>
-                                _navigateToMovieDetailsScreen(
-                              context,
-                              movieId,
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(
-                        height: MARGIN_XLARGE,
-                      ),
-                      Selector<HomeBloc, List<MovieVO>?>(
-                        selector: (BuildContext context, bloc) =>
-                            bloc.comingSoonMovies,
-                        builder: (BuildContext context, comingSoonMovies,
-                            Widget? child) {
-                          return ComingSoonSectionView(
-                            COMING_SOON_MOVIE_LIST_TEXT,
-                            movieList: comingSoonMovies,
-                            onTapMovie: (movieId) =>
-                                _navigateToMovieDetailsScreen(
-                              context,
-                              movieId,
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                  child: Icon(
+                    Icons.search,
+                    color: Colors.black,
+                    size: MARGIN_XLARGE,
                   ),
                 ),
-              ),
-            );
-          }),
+              ],
+            ),
+            body: HOME_PAGE[EnvironmentConfig.CONFIG_HOME_PAGE] ==
+                    "Horizontal list"
+                ? MovieHorizontalListView(
+                    tabController: _tabController,
+                    userData: userData,
+                  )
+                : MovieTabBarView(
+                    tabController: _tabController,
+                    userData: userData,
+                  ),
+          );
+        },
+      ),
     );
   }
 
@@ -180,160 +166,134 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class DrawerView extends StatelessWidget {
-  const DrawerView({
-    Key? key,
-    required this.menuItem,
-    required this.userDataVO,
-    required this.onTap,
-  }) : super(key: key);
-
-  final List<MenuItems> menuItem;
-  final UserDataVO? userDataVO;
-  final Function onTap;
+class MovieTabBarView extends StatelessWidget {
+  TabController? tabController;
+  UserDataVO? userData;
+  MovieTabBarView({required this.tabController, required this.userData});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
-      child: Drawer(
-        child: Container(
-          color: PRIMARY_COLOR,
-          padding: const EdgeInsets.symmetric(
-            horizontal: MARGIN_MEDIUM_2,
-          ),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 96.0,
-              ),
-              DrawerHeaderSectionView(
-                userDataVo: userDataVO,
-              ),
-              const SizedBox(
-                height: MARGIN_XXLARGE,
-              ),
-              Column(
-                children: menuItem
-                    .map(
-                      (menu) => Container(
-                        margin: const EdgeInsets.only(
-                          top: MARGIN_MEDIUM_2,
-                        ),
-                        child: ListTile(
-                          leading: Icon(
-                            menu.icon,
-                            color: Colors.white,
-                            size: MARGIN_MEDIUM_4,
-                          ),
-                          title: Text(
-                            menu.text,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: TEXT_REGULAR_2X,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  onTap();
-                },
-                child: const ListTile(
-                  leading: Icon(
-                    Icons.logout,
-                    color: Colors.white,
-                    size: MARGIN_MEDIUM_4,
+    return NestedScrollView(
+      headerSliverBuilder: (context, value) {
+        return [
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: MARGIN_MEDIUM,
                   ),
-                  title: Text(
-                    'Logout',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: TEXT_REGULAR_2X,
-                    ),
+                  child: ProfileView(
+                    name: userData?.name ?? "",
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: MARGIN_XLARGE,
-              ),
-            ],
+                const SizedBox(
+                  height: MARGIN_MEDIUM_3,
+                ),
+                TabBarSectionView(
+                  tabController: tabController,
+                  tabBarOneName: "Now Showing",
+                  tabBarTwoName: "Coming Soon",
+                ),
+              ],
+            ),
           ),
-        ),
+        ];
+      },
+      body: TabBarView(
+        controller: tabController,
+        children: [
+          Selector<HomeBloc, List<MovieVO>?>(
+            selector: (BuildContext context, bloc) => bloc.nowShowingMovies,
+            builder: (BuildContext context, nowShowingMovies, Widget? child) {
+              return Padding(
+                padding: const EdgeInsets.only(top: MARGIN_LARGE),
+                child: NowShowingTabBarSectionView(
+                  NOW_SHOWING_MOVIE_LIST_TEXT,
+                  movieList: nowShowingMovies,
+                  onTapMovie: (movieId) => _navigateToMovieDetailsScreen(
+                    context,
+                    movieId,
+                  ),
+                ),
+              );
+            },
+          ),
+          Selector<HomeBloc, List<MovieVO>?>(
+            selector: (BuildContext context, bloc) => bloc.comingSoonMovies,
+            builder: (BuildContext context, comingSoonMovies, Widget? child) {
+              return Padding(
+                padding: const EdgeInsets.only(top: MARGIN_LARGE),
+                child: ComingSoonTabBarSectionView(
+                  COMING_SOON_MOVIE_LIST_TEXT,
+                  movieList: comingSoonMovies,
+                  onTapMovie: (movieId) => _navigateToMovieDetailsScreen(
+                    context,
+                    movieId,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
 }
 
-class DrawerHeaderSectionView extends StatelessWidget {
-  final UserDataVO? userDataVo;
-  const DrawerHeaderSectionView({Key? key, required this.userDataVo})
-      : super(key: key);
-
+class MovieHorizontalListView extends StatelessWidget {
+  UserDataVO? userData;
+  TabController? tabController;
+  MovieHorizontalListView(
+      {required this.userData, required this.tabController});
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 56.0,
-          height: 56.0,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage(
-                'https://www.whatsappimages.in/wp-content/uploads/2021/02/Beautiful-Girls-Whatsapp-DP-Profile-Images-pics-for-download-300x300.gif',
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: MARGIN_MEDIUM,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ProfileView(
+              name: userData?.name ?? "",
             ),
-          ),
-        ),
-        const SizedBox(
-          width: MARGIN_MEDIUM_2,
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                userDataVo?.name ?? " ",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: TEXT_REGULAR_2X,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(
-                height: MARGIN_MEDIUM,
-              ),
-              Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      userDataVo?.email ?? "",
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
+            const SizedBox(
+              height: MARGIN_MEDIUM_3,
+            ),
+            Selector<HomeBloc, List<MovieVO>?>(
+              selector: (BuildContext context, bloc) => bloc.nowShowingMovies,
+              builder: (BuildContext context, nowShowingMovies, Widget? child) {
+                return NowShowingSectionView(
+                  NOW_SHOWING_MOVIE_LIST_TEXT,
+                  movieList: nowShowingMovies,
+                  onTapMovie: (movieId) => _navigateToMovieDetailsScreen(
+                    context,
+                    movieId,
                   ),
-                  const SizedBox(
-                    width: MARGIN_LARGE,
+                );
+              },
+            ),
+            const SizedBox(
+              height: MARGIN_XLARGE,
+            ),
+            Selector<HomeBloc, List<MovieVO>?>(
+              selector: (BuildContext context, bloc) => bloc.comingSoonMovies,
+              builder: (BuildContext context, comingSoonMovies, Widget? child) {
+                return ComingSoonSectionView(
+                  COMING_SOON_MOVIE_LIST_TEXT,
+                  movieList: comingSoonMovies,
+                  onTapMovie: (movieId) => _navigateToMovieDetailsScreen(
+                    context,
+                    movieId,
                   ),
-                  const Text(
-                    'Edit',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                );
+              },
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -358,184 +318,4 @@ void _navigateToWelcomeScreen(BuildContext context) {
       builder: (context) => WelcomePage(),
     ),
   );
-}
-
-class NowShowingSectionView extends StatelessWidget {
-  final String title;
-  final List<MovieVO>? movieList;
-  final Function(int?) onTapMovie;
-  NowShowingSectionView(
-    this.title, {
-    required this.movieList,
-    required this.onTapMovie,
-  });
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-            margin: const EdgeInsets.only(
-              left: MARGIN_MEDIUM,
-            ),
-            child: TitleText(title)),
-        const SizedBox(
-          height: MARGIN_MEDIUM_2,
-        ),
-        HorizontalMovieListView(
-          movieList: movieList,
-          onTapMovie: (movieId) => onTapMovie(movieId),
-        ),
-      ],
-    );
-  }
-}
-
-class ComingSoonSectionView extends StatelessWidget {
-  final String title;
-  final List<MovieVO>? movieList;
-  final Function onTapMovie;
-  ComingSoonSectionView(
-    this.title, {
-    required this.movieList,
-    required this.onTapMovie,
-  });
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-            margin: const EdgeInsets.only(
-              left: MARGIN_MEDIUM,
-            ),
-            child: TitleText(title)),
-        const SizedBox(
-          height: MARGIN_MEDIUM_2,
-        ),
-        HorizontalMovieListView(
-          movieList: movieList,
-          onTapMovie: (movieId) => onTapMovie(movieId),
-        ),
-      ],
-    );
-  }
-}
-
-class HorizontalMovieListView extends StatelessWidget {
-  final List<MovieVO>? movieList;
-  final Function(int?) onTapMovie;
-  HorizontalMovieListView({
-    required this.movieList,
-    required this.onTapMovie,
-  });
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
-      height: HORIZONTAL_LISTVIEW_HEIGHT,
-      child: ListView.builder(
-        padding: const EdgeInsets.only(
-          left: MARGIN_MEDIUM,
-        ),
-        scrollDirection: Axis.horizontal,
-        itemCount: movieList?.length,
-        itemBuilder: (context, index) {
-          return MovieView(
-              movie: movieList?[index],
-              onTapMovie: () {
-                onTapMovie(movieList?[index].id);
-              });
-        },
-      ),
-    );
-  }
-}
-
-class MovieView extends StatelessWidget {
-  final MovieVO? movie;
-  final Function onTapMovie;
-  MovieView({
-    required this.movie,
-    required this.onTapMovie,
-  });
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () => onTapMovie(),
-          child: Container(
-            margin: const EdgeInsets.only(
-              right: MARGIN_MEDIUM,
-            ),
-            height: HOME_SCREEN_MOVIE_HEIGHT,
-            width: HOME_SCREEN_MOVIE_WIDTH,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(
-                MARGIN_MEDIUM,
-              ),
-              image: DecorationImage(
-                image: NetworkImage(
-                  "$IMAGE_BASE_URL${movie?.posterPath}",
-                ),
-                fit: BoxFit.fill,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: MARGIN_MEDIUM,
-        ),
-        Container(
-          width: HOME_SCREEN_MOVIE_WIDTH,
-          child: Center(
-            child: GestureDetector(
-              onTap: () {
-                onTapMovie();
-              },
-              child: Text(
-                movie?.title ?? "",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: MARGIN_SMALL,
-        ),
-        SubText(
-          movie?.releaseDate ?? "",
-          textSize: TEXT_SMALL,
-        ),
-      ],
-    );
-  }
-}
-
-class ProfileView extends StatelessWidget {
-  String name;
-  ProfileView({required this.name});
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const CircleAvatar(
-          backgroundImage: NetworkImage(
-            'https://www.whatsappimages.in/wp-content/uploads/2021/02/Beautiful-Girls-Whatsapp-DP-Profile-Images-pics-for-download-300x300.gif',
-          ),
-        ),
-        const SizedBox(
-          width: MARGIN_MEDIUM_2,
-        ),
-        TitleText(
-          "Hi $name",
-          textSize: TEXT_HEADING_1X,
-        ),
-      ],
-    );
-  }
 }

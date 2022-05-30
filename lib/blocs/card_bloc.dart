@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:movie_booking/configs/config_values.dart';
+import 'package:movie_booking/configs/environment_config.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 
 import '../data/models/auth/auth_model.dart';
@@ -23,6 +25,11 @@ class CardBloc extends ChangeNotifier {
     }
     authModel.getUserCardsFromDatabase().listen((card) {
       cardList = card?.reversed.toList();
+      if(USER_CARD[EnvironmentConfig.CONFIG_USER_CARD] == "Horizontal list"){
+        cardList?[0].isSelected = true;
+      } else {
+        cardList?[0].isSelected = false;
+      }
       notifyListeners();
     }).onError((error) {
       debugPrint(error.toString());

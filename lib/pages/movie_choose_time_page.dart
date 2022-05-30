@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_week/flutter_calendar_week.dart';
 import 'package:movie_booking/blocs/movie_choose_time_bloc.dart';
+import 'package:movie_booking/configs/config_values.dart';
 import 'package:movie_booking/data/vos/cinema_vo.dart';
 import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/data/vos/timeslot_vo.dart';
@@ -10,6 +11,8 @@ import 'package:movie_booking/resources/dimension.dart';
 import 'package:movie_booking/widgets/app_text_button.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../configs/environment_config.dart';
 
 class MovieChooseTimePage extends StatelessWidget {
   MovieVO? movie;
@@ -27,7 +30,7 @@ class MovieChooseTimePage extends StatelessWidget {
             return Scaffold(
               appBar: AppBar(
                 elevation: 0.0,
-                backgroundColor: PRIMARY_COLOR,
+                backgroundColor: THEME_COLOR[EnvironmentConfig.CONFIG_THEME_COLOR],
                 leading: GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
@@ -85,7 +88,7 @@ class MovieChooseTimePage extends StatelessWidget {
                           btnColor: bloc.selectedMovieTime == null ||
                                   bloc.selectedMovieTime == ""
                               ? Colors.grey
-                              : PRIMARY_COLOR,
+                              : THEME_COLOR[EnvironmentConfig.CONFIG_THEME_COLOR],
                         );
                       }),
                 ),
@@ -211,7 +214,7 @@ class ChooseItemGridView extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: timeSlot?[index].isSelected == true
-                      ? PRIMARY_COLOR
+                      ? BUTTON_COLOR[EnvironmentConfig.CONFIG_BUTTON_COLOR]
                       : Colors.white,
                   border: Border.all(
                     color: Colors.grey,
@@ -247,7 +250,7 @@ class MovieChooseDateView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: MOVIE_CHOOSE_DATE_HIGHT,
-      color: PRIMARY_COLOR,
+      color: THEME_COLOR[EnvironmentConfig.CONFIG_THEME_COLOR],
       child: CalendarWeek(
         height: 100,
         minDate: DateTime.now().add(

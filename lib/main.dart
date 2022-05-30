@@ -4,6 +4,8 @@ import 'package:movie_booking/data/vos/movie_vo.dart';
 import 'package:movie_booking/data/vos/user_card_vo.dart';
 import 'package:movie_booking/data/vos/user_data_vo.dart';
 import 'package:movie_booking/pages/welcome_page.dart';
+import 'configs/config_values.dart';
+import 'configs/environment_config.dart';
 import 'data/vos/cinema_list_for_hive_vo.dart';
 import 'data/vos/cinema_vo.dart';
 import 'data/vos/timeslot_vo.dart';
@@ -62,6 +64,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
+       // primaryColor: THEME_COLOR[EnvironmentConfig.CONFIG_THEME_COLOR],
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
